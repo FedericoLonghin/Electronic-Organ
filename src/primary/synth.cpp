@@ -1,6 +1,6 @@
 #include "common.h"
-#include <fluidsynth.h>
 #include "synth.h"
+#include <fluidsynth.h>
 
 void noteOn(int ch, int key)
 {

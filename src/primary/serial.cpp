@@ -6,13 +6,12 @@ char read_buf[256];
 int num_bytes;
 int serial_port;
 bool isRead_buffEmpty = true;
-
-
-
+int serial_event_in_buffer = 0;
 using namespace std;
 
-int setupSerial()
+bool setupSerial()
 {
+    serial_event_in_buffer = 0;
     serial_port = open("/dev/ttyACM0", O_RDWR);
     struct termios tty;
     if (tcgetattr(serial_port, &tty) != 0)
@@ -28,25 +27,23 @@ int setupSerial()
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0)
     {
         cout << "Error";
-        return 0;
+        return false;
     }
-    return 1;
+    return true;
 }
 
 bool checkForSerial(SerialEvent &evt)
 {
-    if (isRead_buffEmpty)
-    {
 
-        memset(&read_buf, '\0', sizeof(read_buf));
+    //memset(&read_buf, '\0', sizeof(read_buf));
 
-        num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
-    }
-    if (!isRead_buffEmpty || num_bytes > 0)
+    num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
+
+    if (num_bytes > 3)
     {
         // char *ptr = read_buf;
         // char **ptrPtr = &ptr;
-        cout<<"Parsing: "<<read_buf;
+        cout << "Parsing: " << read_buf;
         evt = parseMessage(read_buf);
         // evt = newParseMessage(ptrPtr);
         // cout << (int)evt.eventType;
@@ -102,7 +99,7 @@ SerialEvent parseMessage(char *raw_msg)
     while (token != NULL)
     {
         // str[i] = token;
-        if (i % 3==0)
+        if (i == 0)
         {
             if (strcmp(token, "N-On") == 0)
             {
@@ -113,23 +110,34 @@ SerialEvent parseMessage(char *raw_msg)
                 msg.eventType = EVENT_CODE_NOTEOFF;
             }
         }
-        if (i %3== 1)
+        if (i == 1)
         {
             msg.channel = atoi(token);
         }
-        if (i %3== 2)
+        if (i == 2)
         {
             msg.message = atoi(token);
         }
-        // if (i&4 == 3)
-        // {
-        //     strcpy(token, read_buf);
-        //     // read_buf=token;
-        //     isRead_buffEmpty = false;
-        // }
+        if(i>=3){
+            char* trash=token;
+        }
+
         i++;
         token = strtok(NULL, " ");
     }
 
     return msg;
+}
+
+int simpleRead()
+{
+    // cout << "Reading from Serial/n";
+
+    //memset(&read_buf, '\0', sizeof(read_buf));
+
+    num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
+    //cout << "read num:" << num_bytes;
+    //puts(read_buf);
+    if (num_bytes!=0)return 0;
+    return -1;
 }
