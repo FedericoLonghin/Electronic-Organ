@@ -5,7 +5,6 @@
 char read_buf[256];
 int num_bytes;
 int serial_port;
-bool isRead_buffEmpty = true;
 int serial_event_in_buffer = 0;
 using namespace std;
 
@@ -18,7 +17,27 @@ bool setupSerial()
     {
         return 0;
     }
-    tty.c_cc[VTIME] = 10;
+
+    tty.c_cflag &= ~PARENB;
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag &= ~CRTSCTS;
+    tty.c_cflag |= CREAD | CLOCAL;
+
+    tty.c_lflag &= ~ICANON;
+    tty.c_lflag &= ~ECHO;
+    tty.c_lflag &= ~ECHOE;
+    tty.c_lflag &= ~ECHONL;
+    tty.c_lflag &= ~ISIG;
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+    tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
+
+    tty.c_oflag &= ~OPOST;
+    tty.c_oflag &= ~ONLCR;
+
+    //----------------
+    tty.c_cc[VTIME] = 0.1;
     tty.c_cc[VMIN] = 0;
 
     cfsetispeed(&tty, B115200);
@@ -35,30 +54,25 @@ bool setupSerial()
 bool checkForSerial(SerialEvent &evt)
 {
 
-    //memset(&read_buf, '\0', sizeof(read_buf));
-
-    num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
-
-    if (num_bytes > 3)
+    // memset(&read_buf, '\0', sizeof(read_buf));
+    if (serial_event_in_buffer == 0)
     {
-        // char *ptr = read_buf;
-        // char **ptrPtr = &ptr;
-        cout << "Parsing: " << read_buf;
-        evt = parseMessage(read_buf);
-        // evt = newParseMessage(ptrPtr);
-        // cout << (int)evt.eventType;
-        return 1;
+        num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
+
+        if (num_bytes > 0)
+        {
+            // char *ptr = read_buf;
+            // char **ptrPtr = &ptr;
+            cout << "Parsing: " << read_buf;
+            evt = parseMessage(read_buf);
+            // evt = newParseMessage(ptrPtr);
+            // cout << (int)evt.eventType;
+            return 1;
+        }
     }
+
     return 0;
 }
-
-// class SerialEvent
-// {
-// public:
-//     char channel;
-//     char eventType;
-//     char message;
-// };
 
 // SerialEvent newParseMessage(char *raw_msg)
 // {
@@ -94,7 +108,6 @@ SerialEvent parseMessage(char *raw_msg)
     char *token;
     // char *str[4];
     int i = 0;
-    isRead_buffEmpty = true;
     token = strtok(raw_msg, " ");
     while (token != NULL)
     {
@@ -118,8 +131,9 @@ SerialEvent parseMessage(char *raw_msg)
         {
             msg.message = atoi(token);
         }
-        if(i>=3){
-            char* trash=token;
+        if (i >= 3)
+        {
+            char *trash = token;
         }
 
         i++;
@@ -131,13 +145,24 @@ SerialEvent parseMessage(char *raw_msg)
 
 int simpleRead()
 {
-    // cout << "Reading from Serial/n";
 
-    //memset(&read_buf, '\0', sizeof(read_buf));
+    // memset(&read_buf, '\0', sizeof(read_buf));
 
     num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
-    //cout << "read num:" << num_bytes;
-    //puts(read_buf);
-    if (num_bytes!=0)return 0;
-    return -1;
+    if (num_bytes > 0)
+    {
+        puts(read_buf);
+        return num_bytes;
+    }
+    return 0;
 }
+
+// class SerialEventQuee
+// {
+//     SerialEvent quee[];
+// public:
+//     SerialEventQuee(int len)
+//     {
+//     }
+//     int len;
+// };

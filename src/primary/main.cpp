@@ -1,6 +1,7 @@
 #include "common.h"
 #include "synth.h"
 #include "serial.h"
+#include "terminal.h"
 
 int sustained = 0;
 int sustained_note[20];
@@ -13,33 +14,11 @@ fluid_synth_t *synth2;
 
 using namespace std;
 
-void SIGINT_handler(int s)
-{
-    cout << "\nClosing Electronic Organ...\n- Empting SerialMessages...";
-    while (simpleRead() == 0)
-    {
-        cout << "*";
-    }
-    cout << " Done\n- Closing Serial Port...";
-    close(serial_port);
-    cout << " Done\n- Deleting fluidsynth Instances...";
-
-    delete_fluid_audio_driver(adriver);
-    delete_fluid_synth(synth);
-    delete_fluid_settings(settings);
-
-    cout << " Done\n- Sendind exit command...\n";
-    exit(0);
-}
-
 int main(int argc, char **argv)
 {
     cout << "Electronic Organ by Federico Longhin\nStarting sequence:\n";
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = SIGINT_handler;
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+
+    setupSigaction();
 
     cout << "- Setupping Serial connection... ";
     if (!setupSerial())
@@ -61,7 +40,7 @@ int main(int argc, char **argv)
     adriver = new_fluid_audio_driver(settings, synth);
     // adriver2 = new_fluid_audio_driver(settings, synth2);
 
-    sfont_id = fluid_synth_sfload(synth, "../soundfonts/example.sf2", 1);
+    sfont_id = fluid_synth_sfload(synth, "../soundfonts/example2.sf2", 1);
     // sfont_id = fluid_synth_sfload(synth2, "../soundfonts/example.sf2", 1);
     if (sfont_id == FLUID_FAILED)
     {
@@ -75,29 +54,23 @@ int main(int argc, char **argv)
     fluid_synth_program_change(synth2, 0, 40);
 
     int t = 0;
-    SerialEvent event[EVENT_BUFFER_LENGTH];
-    cout<<"All done!\n";
+    SerialEvent Oldevent[EVENT_BUFFER_LENGTH];
+    SerialEvent event;
+    SerialEvent *arr = new SerialEvent[EVENT_BUFFER_LENGTH];
+    cout << "All done!\n";
     while (true)
     {
-
-        if (checkForSerial(event[serial_event_in_buffer]))
+        if ( 0 && serial_event_in_buffer > 0)
         {
-            // std::cout << (int)event.eventType;
-            triggerSynthEvent(event[serial_event_in_buffer]);
+            for ( int i = 0; i < serial_event_in_buffer; i++)
+            {
+                triggerSynthEvent(event);
+            }
         }
-        // exit(1);
-        // system("stty raw");
-        // if (getchar())
-        //     return 0;
+        if (checkForSerial(event))
+        {
+            triggerSynthEvent(event);
+        }
     }
-
-err:
-    /* Clean up */
-    delete_fluid_audio_driver(adriver);
-    delete_fluid_synth(synth);
-    delete_fluid_settings(settings);
-
-    close(serial_port);
-
     return 0;
 }

@@ -21,7 +21,7 @@ void bootSound()
     fluid_synth_noteon(synth, 0, 88, 80);
     usleep(50000);
     fluid_synth_noteon(synth, 0, 91, 80);
-    sleep(1);
+    usleep(200000);
     fluid_synth_noteoff(synth, 0, 84);
     fluid_synth_noteoff(synth, 0, 88);
     fluid_synth_noteoff(synth, 0, 91);
