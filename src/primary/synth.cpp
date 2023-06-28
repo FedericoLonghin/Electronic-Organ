@@ -40,7 +40,6 @@ void triggerSynthEvent(SerialEvent event)
         noteOff(event.channel, event.message);
         break;
     default:
-        std::cout << "Err"
-                  << "\t\t" << (int)event.eventType;
+        std::cout << "Err - EventType not recognized. String:["<<event.eventType<<" "<<event.channel<<" "<<event.message<<"]\n";
     }
 }

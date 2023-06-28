@@ -5,7 +5,7 @@
 char read_buf[256];
 int num_bytes;
 int serial_port;
-int serial_event_in_buffer = 0;
+int serial_event_in_buffer;
 using namespace std;
 
 bool setupSerial()
@@ -37,7 +37,7 @@ bool setupSerial()
     tty.c_oflag &= ~ONLCR;
 
     //----------------
-    tty.c_cc[VTIME] = 0.1;
+    tty.c_cc[VTIME] = 1;
     tty.c_cc[VMIN] = 0;
 
     cfsetispeed(&tty, B115200);
@@ -51,11 +51,10 @@ bool setupSerial()
     return true;
 }
 
-bool checkForSerial(SerialEvent &evt)
+int checkForSerial(SerialEvent *evt, int num_elem)
 {
-
-    // memset(&read_buf, '\0', sizeof(read_buf));
-    if (serial_event_in_buffer == 0)
+    memset(&read_buf, '\0', sizeof(read_buf));
+    if (num_elem == 0) // buffer is empty
     {
         num_bytes = read(serial_port, &read_buf, sizeof(read_buf));
 
@@ -63,11 +62,10 @@ bool checkForSerial(SerialEvent &evt)
         {
             // char *ptr = read_buf;
             // char **ptrPtr = &ptr;
-            cout << "Parsing: " << read_buf;
-            evt = parseMessage(read_buf);
+            int num = parseMessage(read_buf, evt, num_elem);
             // evt = newParseMessage(ptrPtr);
-            // cout << (int)evt.eventType;
-            return 1;
+
+            return num;
         }
     }
 
@@ -101,46 +99,56 @@ bool checkForSerial(SerialEvent &evt)
 //     return msg;
 // }
 
-SerialEvent parseMessage(char *raw_msg)
+int parseMessage(char *raw_msg, SerialEvent *evt, int num)
 {
-    // cout << raw_msg;
-    SerialEvent msg;
+
+    cout << " Parsing: " << raw_msg << "\n";
+    SerialEvent *msg[EVENT_BUFFER_LENGTH];
+    num--;
+
     char *token;
-    // char *str[4];
     int i = 0;
-    token = strtok(raw_msg, " ");
+    char delimit[] = " \t\r\n\v\f";
+    token = strtok(raw_msg, delimit);
     while (token != NULL)
     {
-        // str[i] = token;
-        if (i == 0)
+        if (i % 4 == 0)
         {
+            // if (strcmp(token, "") == 0)
+            //     break;
+            num++;
+            cout << " - creating obj for num= " << num << " type= "<<token<<"\n";
+            msg[num] = new SerialEvent;
+
             if (strcmp(token, "N-On") == 0)
             {
-                msg.eventType = EVENT_CODE_NOTEON;
+                msg[num]->eventType = EVENT_CODE_NOTEON;
             }
             else if (strcmp(token, "N-Off") == 0)
             {
-                msg.eventType = EVENT_CODE_NOTEOFF;
+                msg[num]->eventType = EVENT_CODE_NOTEOFF;
             }
         }
-        if (i == 1)
+        if (i % 4 == 1)
         {
-            msg.channel = atoi(token);
+            msg[num]->channel = atoi(token);
         }
-        if (i == 2)
+        if (i % 4 == 2)
         {
-            msg.message = atoi(token);
-        }
-        if (i >= 3)
-        {
-            char *trash = token;
+            msg[num]->message = atoi(token);
         }
 
         i++;
-        token = strtok(NULL, " ");
+        token = strtok(NULL, delimit);
+    }
+    for (int j = 0; j <= num; j++)
+    {
+        evt[j].eventType = msg[j]->eventType;
+        evt[j].channel = msg[j]->channel;
+        evt[j].message = msg[j]->message;
     }
 
-    return msg;
+return num+1;
 }
 
 int simpleRead()

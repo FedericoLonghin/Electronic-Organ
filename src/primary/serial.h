@@ -1,5 +1,5 @@
 bool setupSerial();
-bool checkForSerial(SerialEvent &evt);
+int checkForSerial(SerialEvent *evt, int num);
 
-SerialEvent parseMessage(char *raw_msg);
+int parseMessage(char *raw_msg, SerialEvent *evt, int num);
 int simpleRead();

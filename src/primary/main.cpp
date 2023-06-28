@@ -57,20 +57,25 @@ int main(int argc, char **argv)
     SerialEvent Oldevent[EVENT_BUFFER_LENGTH];
     SerialEvent event;
     SerialEvent *arr = new SerialEvent[EVENT_BUFFER_LENGTH];
+
     cout << "All done!\n";
     while (true)
     {
-        if ( 0 && serial_event_in_buffer > 0)
+        int n = checkForSerial(arr, serial_event_in_buffer);
+        if (n >= 0)
         {
-            for ( int i = 0; i < serial_event_in_buffer; i++)
-            {
-                triggerSynthEvent(event);
-            }
+            serial_event_in_buffer = n;
         }
-        if (checkForSerial(event))
+        for (int i = 0; i < serial_event_in_buffer; i++)
         {
-            triggerSynthEvent(event);
+            cout<<" for i= "<<i<<", end at: "<<serial_event_in_buffer<<"\n";
+            triggerSynthEvent(arr[i]);
         }
+
+        // if (checkForSerial(arr, serial_event_in_buffer) > 0)
+        // {
+        //     triggerSynthEvent(arr[0]);
+        // }
     }
     return 0;
 }
