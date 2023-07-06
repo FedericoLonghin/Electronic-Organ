@@ -2,6 +2,7 @@
 #include "synth.h"
 #include "serial.h"
 #include "terminal.h"
+#include <thread>
 
 int sustained = 0;
 int sustained_note[20];
@@ -41,7 +42,8 @@ int main(int argc, char **argv)
     // adriver2 = new_fluid_audio_driver(settings, synth2);
 
     sfont_id = fluid_synth_sfload(synth, "../soundfonts/example2.sf2", 1);
-    // sfont_id = fluid_synth_sfload(synth2, "../soundfonts/example.sf2", 1);
+    // sfont_id = fluid_synth_sfload(synth, "../soundfonts/example.sf2", 1);
+    //  sfont_id = fluid_synth_sfload(synth, "../soundfonts/minimoog_leads.sf2", 1);
     if (sfont_id == FLUID_FAILED)
     {
         puts("Loading the SoundFont failed!");
@@ -50,15 +52,16 @@ int main(int argc, char **argv)
 
     bootSound();
     int a, b, c;
-    fluid_synth_program_change(synth, 1, 30);
-    fluid_synth_program_change(synth2, 0, 40);
+    fluid_synth_program_change(synth, 2, 0);
+    // fluid_synth_program_change(synth2, 0, 40);
 
-    int t = 0;
-    SerialEvent Oldevent[EVENT_BUFFER_LENGTH];
-    SerialEvent event;
     SerialEvent *arr = new SerialEvent[EVENT_BUFFER_LENGTH];
 
+    // cout << "Creating thread\n";
+    thread ConsoleInThread(consoleIn);
     cout << "All done!\n";
+
+
     while (true)
     {
         int n = checkForSerial(arr, serial_event_in_buffer);
@@ -68,7 +71,7 @@ int main(int argc, char **argv)
         }
         for (int i = 0; i < serial_event_in_buffer; i++)
         {
-            cout<<" for i= "<<i<<", end at: "<<serial_event_in_buffer<<"\n";
+            //cout << " for i= " << i << ", end at: " << serial_event_in_buffer << "\n";
             triggerSynthEvent(arr[i]);
         }
 
@@ -76,6 +79,9 @@ int main(int argc, char **argv)
         // {
         //     triggerSynthEvent(arr[0]);
         // }
+        // char* in;
+        // cin>>in;
+        // cout<<in;
     }
     return 0;
 }

@@ -102,7 +102,7 @@ int checkForSerial(SerialEvent *evt, int num_elem)
 int parseMessage(char *raw_msg, SerialEvent *evt, int num)
 {
 
-    cout << " Parsing: " << raw_msg << "\n";
+    // cout << " Parsing: " << raw_msg << "\n";
     SerialEvent *msg[EVENT_BUFFER_LENGTH];
     num--;
 
@@ -117,7 +117,7 @@ int parseMessage(char *raw_msg, SerialEvent *evt, int num)
             // if (strcmp(token, "") == 0)
             //     break;
             num++;
-            cout << " - creating obj for num= " << num << " type= "<<token<<"\n";
+            // cout << " - creating obj for num= " << num << " type= "<<token<<"\n";
             msg[num] = new SerialEvent;
 
             if (strcmp(token, "N-On") == 0)

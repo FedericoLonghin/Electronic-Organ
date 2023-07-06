@@ -30,3 +30,16 @@ public:
     int channel;
     int eventType;
 };
+
+class ConsoleCommand{
+public :
+ConsoleCommand(){}
+int type;
+
+
+};
+enum ConsoleCommandCode{
+COMMAND_EXIT,
+COMMAND_LOAD,
+
+};
