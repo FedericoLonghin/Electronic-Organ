@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     adriver = new_fluid_audio_driver(settings, synth);
     // adriver2 = new_fluid_audio_driver(settings, synth2);
 
-    sfont_id = fluid_synth_sfload(synth, "../soundfonts/example2.sf2", 1);
+    sfont_id = fluid_synth_sfload(synth, "../../../soundfonts/example2.sf2", 1);
     // sfont_id = fluid_synth_sfload(synth, "../soundfonts/example.sf2", 1);
     //  sfont_id = fluid_synth_sfload(synth, "../soundfonts/minimoog_leads.sf2", 1);
     if (sfont_id == FLUID_FAILED)
