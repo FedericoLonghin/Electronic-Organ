@@ -1,4 +1,6 @@
 #include "common.h"
+#include "config.h"
+
 #include "synth.h"
 #include "serial.h"
 #include "terminal.h"
@@ -50,17 +52,22 @@ int main(int argc, char **argv)
     }
     cout << "Done!\n";
 
-    bootSound();
-    int a, b, c;
-    fluid_synth_program_change(synth, 2, 0);
-    // fluid_synth_program_change(synth2, 0, 40);
+    cout << "- Starting ConsoleInThread...";
+    thread ConsoleInThread(consoleIn);
+    cout << "Done!\n";
 
     SerialEvent *arr = new SerialEvent[EVENT_BUFFER_LENGTH];
 
-    // cout << "Creating thread\n";
-    thread ConsoleInThread(consoleIn);
-    cout << "All done!\n";
+    cout << "- Reading Config FIle...";
 
+    if (fetchConfig() != 0)
+    {
+        cout << " Error while loading config file. ";
+    }
+    cout << "DONE\n";
+
+    bootSound();
+    cout << "All done!\n";
 
     while (true)
     {
@@ -71,7 +78,7 @@ int main(int argc, char **argv)
         }
         for (int i = 0; i < serial_event_in_buffer; i++)
         {
-            //cout << " for i= " << i << ", end at: " << serial_event_in_buffer << "\n";
+            // cout << " for i= " << i << ", end at: " << serial_event_in_buffer << "\n";
             triggerSynthEvent(arr[i]);
         }
 

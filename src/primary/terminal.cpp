@@ -61,7 +61,14 @@ void consoleIn()
             case COMMAND_LOAD:
                 if (wordCount == 2)
                 {
-                    cout << fluid_synth_sfload(synth, linearr[1].c_str(), 1);
+                    char path[100];
+                    strcpy(path,sf_path);
+                    strcat(path,linearr[1].c_str());
+                    cout << fluid_synth_sfload(synth, path , 1);
+                    cout<<"Done.\n";
+                }
+                else{
+                    cout<< "Incorrect param number; Retry.\n";
                 }
 
                 break;
@@ -69,7 +76,7 @@ void consoleIn()
                 cout << "Unknown command, Please retry.\n";
                 break;
             }
-            cout << "command: " << getCommand(linearr[0]);
+            // cout << "command: " << getCommand(linearr[0]) << "\n";
         }
     }
 }

@@ -18,6 +18,8 @@ extern fluid_synth_t *synth2;
 extern int serial_port;
 extern int serial_event_in_buffer;
 
+extern const char *sf_path;
+
 #define EVENT_CODE_NOTEON 144
 #define EVENT_CODE_NOTEOFF 128
 #define EVENT_BUFFER_LENGTH 256
@@ -31,15 +33,15 @@ public:
     int eventType;
 };
 
-class ConsoleCommand{
-public :
-ConsoleCommand(){}
-int type;
-
-
+class ConsoleCommand
+{
+public:
+    ConsoleCommand() {}
+    int type;
 };
-enum ConsoleCommandCode{
-COMMAND_EXIT,
-COMMAND_LOAD,
+enum ConsoleCommandCode
+{
+    COMMAND_EXIT,
+    COMMAND_LOAD,
 
 };
