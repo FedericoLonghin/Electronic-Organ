@@ -9,12 +9,11 @@
 #include <signal.h>
 #include <stdlib.h>
 
+#define FLUIDSYNTH_ISTANCE_NUMBER 5
 extern fluid_settings_t *settings;
-extern fluid_audio_driver_t *adriver;
-extern fluid_audio_driver_t *adriver2;
-extern fluid_midi_driver_t *mdriver;
-extern fluid_synth_t *synth;
-extern fluid_synth_t *synth2;
+extern fluid_audio_driver_t *adriver[FLUIDSYNTH_ISTANCE_NUMBER];
+// extern fluid_audio_driver_t *adriver2;
+extern fluid_synth_t *synth[FLUIDSYNTH_ISTANCE_NUMBER];
 extern int serial_port;
 extern int serial_event_in_buffer;
 
@@ -43,5 +42,8 @@ enum ConsoleCommandCode
 {
     COMMAND_EXIT,
     COMMAND_LOAD,
+    COMMAND_ADD,
+    COMMAND_GET_SOUNDFONT_LIST,
+    COMMAND_SET_LEGATO
 
 };

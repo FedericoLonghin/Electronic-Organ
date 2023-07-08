@@ -10,10 +10,8 @@ int sustained = 0;
 int sustained_note[20];
 
 fluid_settings_t *settings;
-fluid_audio_driver_t *adriver;
-fluid_audio_driver_t *adriver2;
-fluid_synth_t *synth;
-fluid_synth_t *synth2;
+fluid_audio_driver_t *adriver[FLUIDSYNTH_ISTANCE_NUMBER];
+fluid_synth_t *synth[FLUIDSYNTH_ISTANCE_NUMBER];
 
 using namespace std;
 
@@ -38,12 +36,14 @@ int main(int argc, char **argv)
     settings = new_fluid_settings();
     fluid_settings_setstr(settings, "audio.driver", "pulseaudio");
 
-    synth = new_fluid_synth(settings);
+    synth[0] = new_fluid_synth(settings);
+    synth[1] = new_fluid_synth(settings);
     // synth2 = new_fluid_synth(settings);
-    adriver = new_fluid_audio_driver(settings, synth);
+    adriver[0] = new_fluid_audio_driver(settings, synth[0]);
+    adriver[1] = new_fluid_audio_driver(settings, synth[1]);
     // adriver2 = new_fluid_audio_driver(settings, synth2);
 
-    sfont_id = fluid_synth_sfload(synth, "../../../soundfonts/example2.sf2", 1);
+    sfont_id = fluid_synth_sfload(synth[0], "../../../soundfonts/example2.sf2", 1);
     // sfont_id = fluid_synth_sfload(synth, "../soundfonts/example.sf2", 1);
     //  sfont_id = fluid_synth_sfload(synth, "../soundfonts/minimoog_leads.sf2", 1);
     if (sfont_id == FLUID_FAILED)
