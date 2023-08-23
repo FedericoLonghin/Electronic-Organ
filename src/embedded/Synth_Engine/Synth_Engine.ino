@@ -14,15 +14,18 @@ void setup() {
 
 
 void loop() {
-// generateAudioChunk(100);
+  // noteOn(50);
+  // delay(1000);
+  noteOn(36);
+  // noteOn(329);
+  // noteOn(392);
+
+  // delay(1000);
+  // noteOn(1000);
+  // for (int i = 0; i < currentAudioObjectsNumber; i++) {
+  //   Serial.printf("Obj n. %d: freq: %d ", i, AudioObjectList[i]->frequency);
+  // }
+  for (;;) {
+
+  }
 }
-// }
-
-void playFreq() {
-}
-
-
-
-
-
-

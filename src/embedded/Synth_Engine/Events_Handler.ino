@@ -1,17 +1,14 @@
 
 
-#define MAX_AUDIO_OBJECT_NUMBER 10
 
-AudioObject *AudioObjectList[MAX_AUDIO_OBJECT_NUMBER];
 
-int currentAudioObjectsNumber = 0;
 
 //Add an AudioObject to AudioObjectList
-int noteOn(int freq) {
+int noteOn(int note) {
   if (currentAudioObjectsNumber >= MAX_AUDIO_OBJECT_NUMBER) {
     return 0;
   }
-  AudioObjectList[currentAudioObjectsNumber] = new AudioObject(freq, 10);
+  AudioObjectList[currentAudioObjectsNumber] = new AudioObject((int)(NoteFrequency[note % 12] * pow(2, note / 12)), 10);
   currentAudioObjectsNumber++;
   return 1;
 }

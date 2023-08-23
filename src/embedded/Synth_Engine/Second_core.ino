@@ -19,14 +19,17 @@ void Core0_SR(void* parameter) {
 }
 
 void generateAudioChunk(int len) {
+
   for (int a = 0; a < len; a++) {
     totalWaveVal = 0;
-    for (int f = 0; f < freqToPlay; f++) {
-      molt = modf((FillBufferIndex * freqToPlayList[f] / (double)Sample_rate), &intPart);
+    for (int f = 0; f < currentAudioObjectsNumber; f++) {
+      molt = modf((FillBufferIndex * AudioObjectList[f]->frequency / (double)Sample_rate), &intPart);
       val = molt * Sample_num;
       totalWaveVal += WaveFormTable[0][val];
     }
-    totalWaveVal /= freqToPlay;
+    if (currentAudioObjectsNumber > 0) {
+      totalWaveVal /= currentAudioObjectsNumber;
+    }
     wave[FillBufferIndex] = totalWaveVal;
     FillBufferIndex++;
     if (FillBufferIndex >= Sample_rate) FillBufferIndex = 0;
