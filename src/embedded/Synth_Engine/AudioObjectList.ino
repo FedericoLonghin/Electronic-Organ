@@ -10,7 +10,6 @@ public:
 public:
 
   AudioObject(int id, int freq, int vol) {
-    Serial.printf("Created note. Id: %d \n",id);
     this->volume = vol;
     this->frequency = freq;
     this->id = id;
@@ -25,6 +24,7 @@ AudioObjectListNew::AudioObjectListNew(int num) {
 }
 
 bool AudioObjectListNew::add(int id) {
+  if(id<=0)return 0;
   int locat = find(id);
 
   if (locat != -1) {  //this note is already present
@@ -53,7 +53,6 @@ bool AudioObjectListNew::remove(int id) {
 
 int AudioObjectListNew::find(int id) {
   for (int i = 0; i < currentlyPlayingNote; i++) {
-    Serial.println(NEWAudioObjectList[i]->id);
     if (NEWAudioObjectList[i]->id == id) return i;
   }
   return -1;
