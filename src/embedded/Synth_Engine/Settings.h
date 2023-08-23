@@ -21,6 +21,23 @@ int totalWaveVal;
 #define MAX_AUDIO_OBJECT_NUMBER 10
 int currentAudioObjectsNumber = 0;
 
-class AudioObject;
 
+class AudioObject;
+class AudioObjectListNew;
+
+AudioObjectListNew *AudioEngine;
 AudioObject *AudioObjectList[MAX_AUDIO_OBJECT_NUMBER];
+
+
+class AudioObjectListNew {
+private:
+public:
+  AudioObject *NEWAudioObjectList[MAX_AUDIO_OBJECT_NUMBER];
+  int currentlyPlayingNote;
+
+  AudioObjectListNew(int num);
+  bool add(int id);
+  bool remove(int id);
+  int find(int id);
+  int getFrequency(int id);
+};
