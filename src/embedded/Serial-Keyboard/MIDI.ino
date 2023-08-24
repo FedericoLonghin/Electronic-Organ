@@ -1,5 +1,4 @@
-void noteOn(byte channel, byte pitch, byte velocity)
-{
+void noteOn(byte channel, byte pitch, byte velocity) {
   // midiEventPacket_t noteOn = { 0x09, 0x90 | channel, pitch, velocity };
   // MidiUSB.sendMIDI(noteOn);
   String str = "N-On ";
@@ -13,9 +12,8 @@ void noteOn(byte channel, byte pitch, byte velocity)
   Serial.print(str);
 }
 
-void noteOff(byte channel, byte pitch, byte velocity)
-{
-    String str = "N-Off ";
+void noteOff(byte channel, byte pitch, byte velocity) {
+  String str = "N-Off ";
   // str += channel;
   // str += " ";
   str += pitch;
@@ -29,14 +27,13 @@ void noteOff(byte channel, byte pitch, byte velocity)
   // MidiUSB.sendMIDI(noteOff);
 }
 
-void programChange(byte channel, byte program)
-{
-  midiEventPacket_t pc = {0x0C, 0xC0 | channel, program, 0};
-  MidiUSB.sendMIDI(pc);
+void programChange(byte channel, byte program) {  //deprecated
+  // midiEventPacket_t pc = {0x0C, 0xC0 | channel, program, 0};
+  // MidiUSB.sendMIDI(pc);
 }
 
-void controlChange(byte channel, byte control, byte value)
-{
-  midiEventPacket_t event = {0x7b, 0xB0 | channel, control, value};
-  MidiUSB.sendMIDI(event);
+void controlChange(byte channel, byte control, byte value) {  //deprecated
+
+  // midiEventPacket_t event = {0x7b, 0xB0 | channel, control, value};
+  // MidiUSB.sendMIDI(event);
 }

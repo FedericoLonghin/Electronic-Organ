@@ -27,6 +27,14 @@ void setup() {
 // }
 
 void loop() {
+  if(Serial.available()){
+    // Serial.println("got so");
+    // Serial.println(Serial.readString());
+    if(Serial.readString().startsWith("stop")){
+      Serial.println("Stopping all sounds");
+      AudioEngine->currentlyPlayingNote=0;
+    }
+  }
   String msg = "";
   bool payload = false;
   while (Serial2.available()) {
@@ -35,6 +43,7 @@ void loop() {
     delay(5);
   }
   if (payload) {
+  Serial.println("New Message:");
     Serial.println(msg);
     if (msg.startsWith("N-On")) {
       // Serial.print("OK");
