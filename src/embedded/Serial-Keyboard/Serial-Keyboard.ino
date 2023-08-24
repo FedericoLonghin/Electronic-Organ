@@ -26,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-Serial.println("loop");
+// Serial.println("loop");
 
   //  printAnalogSliders();
   //printAnalogBuffer();

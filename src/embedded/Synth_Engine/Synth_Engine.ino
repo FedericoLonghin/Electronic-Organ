@@ -25,25 +25,41 @@ void setup() {
 //   }
 //   // Serial.println("no");
 // }
-
+#define MESSAGE_FIXED_LENGTH 10
 void loop() {
-  if(Serial.available()){
+  if (Serial.available()) {
     // Serial.println("got so");
     // Serial.println(Serial.readString());
-    if(Serial.readString().startsWith("stop")){
+    if (Serial.readString().startsWith("stop")) {
       Serial.println("Stopping all sounds");
-      AudioEngine->currentlyPlayingNote=0;
+      AudioEngine->currentlyPlayingNote = 0;
     }
   }
-  String msg = "";
+  char* msg_char="";
+  int msg_len_i = 0;
   bool payload = false;
-  while (Serial2.available()) {
-    msg += (char)Serial2.read();
+  String msg="";
+  if(Serial2.available()){
+
+  //while ( msg_len_i < MESSAGE_FIXED_LENGTH) {
+
+    // msg += (char)
+    // Serial2.readBytes(msg_char,1);
+     msg=Serial2.readStringUntil('.');
     payload = true;
+    msg_len_i++;
     delay(5);
+  // }
   }
+
+  // if (Serial2.available()) {
+  //   msg += (char)Serial2.read();
+  //   payload = true;
+  //   delay(5);
+  // }
   if (payload) {
-  Serial.println("New Message:");
+    
+    Serial.println("New Message:");
     Serial.println(msg);
     if (msg.startsWith("N-On")) {
       // Serial.print("OK");
