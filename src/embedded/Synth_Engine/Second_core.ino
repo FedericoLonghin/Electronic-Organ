@@ -18,14 +18,18 @@ void Core0_SR(void* parameter) {
   }
 }
 
+double intPart;
+double molt;
+int val;
+int totalWaveVal;
 void generateAudioChunk(int len) {
-int noteNum=AudioEngine->currentlyPlayingNote;
+  int noteNum = AudioEngine.getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
-      molt = modf((FillBufferIndex * AudioEngine->getFrequency(f) / (double)Sample_rate), &intPart);
+      molt = modf((FillBufferIndex * AudioEngine.getFrequency(f) / (double)Sample_rate), &intPart);
       val = molt * Sample_num;
-      totalWaveVal += WaveFormTable[0][val];
+      totalWaveVal += WaveFormTable[3][val];
     }
     if (noteNum > 0) {
       totalWaveVal /= noteNum;

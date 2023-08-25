@@ -1,13 +1,9 @@
-const float NoteFrequency[12] = { 16.35, 17.32, 18.35, 19.45, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.14, 30.87 };
-
 
 class AudioObject {
 public:
   int volume;
   int frequency;
   int id;
-
-public:
 
   AudioObject(int id, int freq, int vol) {
     this->volume = vol;
@@ -18,46 +14,49 @@ public:
 
 
 
-AudioObjectListNew::AudioObjectListNew(int num) {
+AudioObjectListMenager::AudioObjectListMenager() {
 
-  AudioObjectListNew::currentlyPlayingNote = 0;
+  _currentlyPlayingNote = 0;
 }
 
-bool AudioObjectListNew::add(int id) {
-  if(id<=0)return 0;
+bool AudioObjectListMenager::add(int id) {
+  if (id <= 0) return 0;
   int locat = find(id);
 
   if (locat != -1) {  //this note is already present
-    NEWAudioObjectList[locat] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
+    AudioObjectList[locat] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
   } else {
 
-    if (currentlyPlayingNote >= MAX_AUDIO_OBJECT_NUMBER) {
+    if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    NEWAudioObjectList[currentlyPlayingNote] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
+    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
 
-    currentlyPlayingNote++;
+    _currentlyPlayingNote++;
   }
   return true;
 }
 
-bool AudioObjectListNew::remove(int id) {
+bool AudioObjectListMenager::remove(int id) {
   int locat = find(id);
   if (locat == -1) return false;
-  if (currentlyPlayingNote > 1) {
-    NEWAudioObjectList[locat] = NEWAudioObjectList[currentlyPlayingNote - 1];
+  if (_currentlyPlayingNote > 1) {
+    AudioObjectList[locat] = AudioObjectList[_currentlyPlayingNote - 1];
   }
-  currentlyPlayingNote--;
+  _currentlyPlayingNote--;
   return true;
 }
 
-int AudioObjectListNew::find(int id) {
-  for (int i = 0; i < currentlyPlayingNote; i++) {
-    if (NEWAudioObjectList[i]->id == id) return i;
+int AudioObjectListMenager::find(int id) {
+  for (int i = 0; i < _currentlyPlayingNote; i++) {
+    if (AudioObjectList[i]->id == id) return i;
   }
   return -1;
 }
 
-int AudioObjectListNew::getFrequency(int id) {
-  return NEWAudioObjectList[id]->frequency;
+int AudioObjectListMenager::getFrequency(int id) {
+  return AudioObjectList[id]->frequency;
+}
+int AudioObjectListMenager::getActiveNotesNumber() {
+  return _currentlyPlayingNote;
 }

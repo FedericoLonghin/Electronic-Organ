@@ -6,38 +6,23 @@ byte wave[Sample_rate];
 int OutBufferIndex = 0;
 int FillBufferIndex = 0;
 
-int freqToPlay = 1;
-int freqToPlayList[] = { 440, 50, 1000 };
-
-double intPart;
-int nextMillis = 0;
-double molt;
-int val;
-int totalWaveVal;
-
-//Aud
-
-
-#define MAX_AUDIO_OBJECT_NUMBER 10
-int currentAudioObjectsNumber = 0;
-
+#define MAX_AUDIO_OBJECT_NUMBER 20
 
 class AudioObject;
-class AudioObjectListNew;
 
-AudioObjectListNew *AudioEngine;
-AudioObject *AudioObjectList[MAX_AUDIO_OBJECT_NUMBER];
-
-
-class AudioObjectListNew {
+class AudioObjectListMenager {
 private:
+   static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
+  int _currentlyPlayingNote;
+  AudioObject *AudioObjectList[_MAX_AUDIO_OBJECT_NUMBER];
 public:
-  AudioObject *NEWAudioObjectList[MAX_AUDIO_OBJECT_NUMBER];
-  int currentlyPlayingNote;
-
-  AudioObjectListNew(int num);
+  AudioObjectListMenager();
   bool add(int id);
   bool remove(int id);
   int find(int id);
   int getFrequency(int id);
+  int getActiveNotesNumber();
+private:
 };
+
+AudioObjectListMenager AudioEngine;
