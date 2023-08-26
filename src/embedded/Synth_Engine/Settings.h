@@ -1,10 +1,12 @@
 #define Sample_num 112
 #define Sample_rate 10000
+
 #define MaxWaveTypes 4
-#define SINE_WAVE 0
-#define TRIANG_WAVE 1
-#define SAW_WAVE 2
-#define SQUARE_WAVE 3
+#define WAVETYPE_SIN 0
+#define WAVETYPE_SAW 2
+#define WAVETYPE_TRIANG 1
+#define WAVETYPE_SQURE 3
+
 byte wave[Sample_rate];
 int OutBufferIndex = 0;
 int FillBufferIndex = 0;
@@ -32,8 +34,9 @@ AudioObjectListMenager AudioEngine;
 class Envelope {
 public:
   int Env_A_t=1000;
-  int Env_D_t=1000;
-  float Env_S_l=0.8f;
+  float Env_A_l=1;
+  int Env_D_t=500;
+  float Env_S_l=0.1f;
   int Env_R_t=1000;
   float getAmplitude(unsigned long startTime);
 };

@@ -35,26 +35,29 @@ float divider = S_n / (float)(S_rate);
 float ampl;
 void generateAudioChunk(int len) {
   int noteNum = AudioEngine.getActiveNotesNumber();
-  float noteAmpl[noteNum]={0};
+  float noteAmpl[noteNum] = { 0 };
   for (int a = 0; a < len; a++) {
     if (FillBufferIndex % 50 == 0) {
       for (int f = 0; f < noteNum; f++) {
 
         noteAmpl[f] = env.getAmplitude(AudioEngine.AudioObjectList[f]->startTime);
+        // Serial.println(noteAmpl[f]);
       }
     }
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
       val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate)) * divider;
       // val = 0;
-      //  Serial.printf("%d: %f",f,noteAmpl[f]);
-      totalWaveVal += WaveFormTable[WaveType][val] * noteAmpl[f];
+      totalWaveVal += (WaveFormTable[WaveType][val] * (float)noteAmpl[f]);
+        // Serial.printf("%d: %f\n",f,totalWaveVal);
+      // totalWaveVal += (WaveFormTable[WaveType][val]);
     }
     // Serial.println();
     if (noteNum > 0) {
       // totalWaveVal /= noteNum;
     }
-    wave[FillBufferIndex] = totalWaveVal*0.3;
+    totalWaveVal*=0.3f;
+    wave[FillBufferIndex] = totalWaveVal < 255 ? totalWaveVal : 255;
     FillBufferIndex++;
     if (FillBufferIndex >= Sample_rate) {
 

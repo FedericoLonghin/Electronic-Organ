@@ -1,6 +1,6 @@
 #include "Settings.h"
 #include "Waveform.h"
-#define WaveType SINE_WAVE
+#define WaveType WAVETYPE_SAW
 void setup() {
   setCpuFrequencyMhz(2400);
   Serial.begin(115200);
