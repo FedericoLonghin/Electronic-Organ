@@ -15,8 +15,7 @@ void setupTimerInterrupt() {
 //Interrupt Service Routine
 //Runs et 10KHz frequency
 void IRAM_ATTR Timer0_ISR() {
-
+  if (OutBufferIndex >= Sample_rate) OutBufferIndex = 0;
   dacWrite(25, wave[OutBufferIndex]);
   OutBufferIndex++;
-  if (OutBufferIndex >= Sample_rate) OutBufferIndex = 0;
 }

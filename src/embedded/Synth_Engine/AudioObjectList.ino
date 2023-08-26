@@ -2,10 +2,11 @@
 class AudioObject {
 public:
   int volume;
-  int frequency;
+  float frequency;
   int id;
+  
 
-  AudioObject(int id, int freq, int vol) {
+  AudioObject(int id, float freq, int vol) {
     this->volume = vol;
     this->frequency = freq;
     this->id = id;
@@ -24,13 +25,13 @@ bool AudioObjectListMenager::add(int id) {
   int locat = find(id);
 
   if (locat != -1) {  //this note is already present
-    AudioObjectList[locat] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
+    AudioObjectList[locat] = new AudioObject(id, (NoteFrequency[id % 12] * pow(2, id / 12)), 10);
   } else {
 
     if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, (int)(NoteFrequency[id % 12] * pow(2, id / 12)), 10);
+    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, (NoteFrequency[id % 12] * pow(2, id / 12)), 10);
 
     _currentlyPlayingNote++;
   }

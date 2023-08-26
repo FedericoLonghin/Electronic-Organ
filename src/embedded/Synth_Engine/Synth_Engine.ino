@@ -27,6 +27,7 @@ void loop() {
     Serial.println("New Message:");
     Serial.println(msg);
     if (msg.startsWith("N-On")) {
+      startCounter(100, false);
       int note = msg.substring(5).toInt();
       Serial.printf("Playing note %d\n", note);
       AudioEngine.add(note);
