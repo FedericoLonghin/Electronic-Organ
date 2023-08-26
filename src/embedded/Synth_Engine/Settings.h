@@ -12,7 +12,7 @@ class AudioObject;
 
 class AudioObjectListMenager {
 private:
-   static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
+  static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
   int _currentlyPlayingNote;
 public:
 
@@ -21,11 +21,8 @@ public:
   bool add(int id);
   bool remove(int id);
   int find(int id);
-  int getFrequency(int id);
   int getActiveNotesNumber();
-int newValArray[20]={0};
-
+  int fastNoteArray[_MAX_AUDIO_OBJECT_NUMBER] = { 0 };
 };
 
 AudioObjectListMenager AudioEngine;
-

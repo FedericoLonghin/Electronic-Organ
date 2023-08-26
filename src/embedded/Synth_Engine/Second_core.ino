@@ -31,15 +31,15 @@ void Core0_SR(void* parameter) {
 #define freq 440
 unsigned long val;
 int totalWaveVal;
-float divider=S_n/(float)S_rate;
+float divider = S_n / (float)S_rate;
 
 void generateAudioChunk(int len) {
   int noteNum = AudioEngine.getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
-        val = ((AudioEngine.newValArray[f] * FillBufferIndex) % (S_rate))*divider;
-
+      val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate))*divider;
+      // val = 0;
       totalWaveVal += WaveFormTable[2][val];
     }
     if (noteNum > 0) {
