@@ -31,21 +31,30 @@ void Core0_SR(void* parameter) {
 #define freq 440
 unsigned long val;
 int totalWaveVal;
-float divider = S_n / (float)S_rate;
-
+float divider = S_n / (float)(S_rate);
+float ampl;
 void generateAudioChunk(int len) {
   int noteNum = AudioEngine.getActiveNotesNumber();
+  float noteAmpl[noteNum]={0};
   for (int a = 0; a < len; a++) {
+    if (FillBufferIndex % 50 == 0) {
+      for (int f = 0; f < noteNum; f++) {
+
+        noteAmpl[f] = env.getAmplitude(AudioEngine.AudioObjectList[f]->startTime);
+      }
+    }
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
-      val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate))*divider;
+      val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate)) * divider;
       // val = 0;
-      totalWaveVal += WaveFormTable[2][val];
+      //  Serial.printf("%d: %f",f,noteAmpl[f]);
+      totalWaveVal += WaveFormTable[WaveType][val] * noteAmpl[f];
     }
+    // Serial.println();
     if (noteNum > 0) {
-      totalWaveVal /= noteNum;
+      // totalWaveVal /= noteNum;
     }
-    wave[FillBufferIndex] = totalWaveVal;
+    wave[FillBufferIndex] = totalWaveVal*0.3;
     FillBufferIndex++;
     if (FillBufferIndex >= Sample_rate) {
 
