@@ -1,7 +1,7 @@
 #include "Settings.h"
 #include "Waveform.h"
-#define SERIAL_DEBUG
-#define WaveType WAVETYPE_SIN
+// #define SERIAL_DEBUG
+#define WaveType WAVETYPE_SAW
 void setup() {
   setCpuFrequencyMhz(2400);
 #ifdef SERIAL_DEBUG
@@ -13,13 +13,13 @@ void setup() {
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
   env.reloadEnvelopeTable();
   //  printFloatArray(env.attackDecayTable,Envelope_AttackDecay_Table_Length);
-  for (int i = 0; i < 1000; i++) {
-   Serial.printf("%d\t%d\n",i, env.attackDecayTableInt[i]);
-  }
+  // for (int i = 0; i < Envelope_Release_Table_Length; i++) {
+  //   Serial.printf("%d\t%d\n", i, env.releaseTableInt[i]);
+  // }
 }
 #define MESSAGE_FIXED_LENGTH 10
 void loop() {
-// Serial.println(myMillis);
+  // Serial.println(myMillis);
   char* msg_char = "";
   int msg_len_i = 0;
   bool payload = false;
@@ -34,26 +34,27 @@ void loop() {
   if (payload) {
 
     if (msg.startsWith("N-On")) {
-#ifdef SERIAL_DEBUG
 
-      startCounter(100, false);
+#ifdef SERIAL_DEBUG startCounter(100, false);
 #endif
+
       int note = msg.substring(5).toInt();
-#ifdef SERIAL_DEBUG
-      Serial.printf("Playing note %d\n", note);
+
+#ifdef SERIAL_DEBUG Serial.printf("Playing note %d\n", note);
 #endif
-      startnote = millis();
-      AudioEngine.add(note);
+
+      AudioEngine.start(note);
 
 
     } else if (msg.startsWith("N-Off")) {
       int note = msg.substring(6).toInt();
-#ifdef SERIAL_DEBUG
 
-      Serial.printf("Stopping note %d\n", note);
+#ifdef SERIAL_DEBUG Serial.printf("Stopping note %d\n", note);
 #endif
-      AudioEngine.remove(note);
+
+      AudioEngine.release(note);
     }
     payload = false;
   }
+    AudioEngine.cleanSilentObjects();
 }

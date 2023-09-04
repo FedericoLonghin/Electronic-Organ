@@ -2,7 +2,7 @@
 
 int Envelope::getAmplitudeInt(unsigned long eventTime, bool isKeyPressed) {
   // int noteLife_ms = eventTime;
-  int noteLife_ms = myMillis - eventTime;
+  int noteLife_ms = currentTime_ms - eventTime;
   if (isKeyPressed) {
 
     //if (noteLife_ms < Env_At) {
@@ -10,9 +10,11 @@ int Envelope::getAmplitudeInt(unsigned long eventTime, bool isKeyPressed) {
       // Serial.println("a");
       return attackDecayTableInt[noteLife_ms];
     }
-    return Env_Al;
+    return Env_Sl;
   }
-  return releaseTable[noteLife_ms];
+  if(noteLife_ms<Env_Rt)
+  return releaseTableInt[noteLife_ms];
+return 0;
 }
 
 
@@ -51,15 +53,16 @@ void Envelope::reloadEnvelopeTable() {
   //Attack
   for (int i = 0; i < Env_At; i++) {
     attackDecayTable[i] = (i / (float)Env_At) * Env_Al;
-    attackDecayTableInt[i] = (i * 255) / Env_At;
+    attackDecayTableInt[i] = (i * Env_Al) / Env_At;
   }
   // Decay
   for (int i = Env_At; i < Env_Dt + Env_At; i++) {
     attackDecayTable[i] = Env_Al - ((i - Env_At) / (float)Env_Dt) * (Env_Al - Env_Sl);
-    attackDecayTableInt[i] = (Env_Al - ((i - Env_At) / (float)Env_Dt) * (Env_Al - Env_Sl)) * 255;
+    attackDecayTableInt[i] = Env_Al - ((i - Env_At) / (float)Env_Dt) * (Env_Al - Env_Sl) ;
   }
   // Release
   for (int i = 0; i < Env_Rt; i++) {
     releaseTable[i] = Env_Sl - (i / (float)Env_Rt) * Env_Sl;
+    releaseTableInt[i] = (Env_Sl - (i / (float)Env_Rt) * Env_Sl);
   }
 }

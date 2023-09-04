@@ -11,26 +11,6 @@ byte wave[Sample_rate];
 int OutBufferIndex = 0;
 int FillBufferIndex = 0;
 
-#define MAX_AUDIO_OBJECT_NUMBER 20
-
-class AudioObject;
-
-class AudioObjectListMenager {
-private:
-  static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
-  int _currentlyPlayingNote;
-public:
-
-  AudioObject *AudioObjectList[_MAX_AUDIO_OBJECT_NUMBER];
-  AudioObjectListMenager();
-  bool add(int id);
-  bool remove(int id);
-  int find(int id);
-  int getActiveNotesNumber();
-  int fastNoteArray[_MAX_AUDIO_OBJECT_NUMBER] = { 0 };
-};
-
-AudioObjectListMenager AudioEngine;
 #define Envelope_AttackDecay_Table_Length 10000
 #define Envelope_Release_Table_Length 1000
 class Envelope {
@@ -41,11 +21,11 @@ public:
   // float Env_S_l = 0.0f;
   // int Env_R_t = 1000;
 
-  int Env_At = 100;
-  float Env_Al = 1;
-  int Env_Dt = 1000;
-  float Env_Sl = 0.0f;
-  int Env_Rt = 1000;
+  int Env_At = 50;
+  int Env_Al = 255;
+  int Env_Dt = 100;
+  int Env_Sl = 180;
+  int Env_Rt = 500;
 
   float getAmplitude(unsigned long eventTime, bool isKeyPressed);
   int getAmplitudeInt(unsigned long eventTime, bool isKeyPressed);
@@ -54,14 +34,41 @@ public:
   float attackDecayTable[Envelope_AttackDecay_Table_Length];
   int attackDecayTableInt[Envelope_AttackDecay_Table_Length];
   float releaseTable[Envelope_Release_Table_Length];
+  int releaseTableInt[Envelope_Release_Table_Length];
 };
+#define MAX_AUDIO_OBJECT_NUMBER 20
+
+class AudioObject;
+
+class AudioObjectListMenager {
+private:
+  static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
+  int _currentlyPlayingNote=0;
+public:
+
+  AudioObject *AudioObjectList[_MAX_AUDIO_OBJECT_NUMBER];
+  AudioObjectListMenager();
+  bool start(int id);
+  bool release(int id);
+  bool stop(int id);
+  int find(int id);
+  void cleanSilentObjects(Envelope _env);
+  void cleanSilentObjects();
+
+  int getActiveNotesNumber();
+  int fastNoteArray[_MAX_AUDIO_OBJECT_NUMBER] = { 0 };
+};
+
+AudioObjectListMenager AudioEngine;
+
 class Sound {
+  public:
   Envelope Env;
   int Volume;
   int WaveType;
 };
-unsigned long startnote;
 
 
 Envelope env;
-unsigned long myMillis = 0;
+//Faster millis alternative
+unsigned long currentTime_ms = 0;
