@@ -4,13 +4,15 @@ public:
   int volume;
   int frequency;
   int id;
-  unsigned long startTime=0;
+  unsigned long eventTime=0;
+  bool isKeyPressed=false;
 
   AudioObject(int id, int vol, unsigned long stime) {
     this->volume = vol;
     this->frequency = NoteFrequency[id % 12] * pow(2, id / 12);
     this->id = id;
-    this->startTime=stime;
+    this->eventTime=stime;
+    this->isKeyPressed=true;
   }
 };
 

@@ -17,5 +17,6 @@ void setupTimerInterrupt() {
 void IRAM_ATTR Timer0_ISR() {
   if (OutBufferIndex >= Sample_rate) OutBufferIndex = 0;
   dacWrite(25, wave[OutBufferIndex]);
+  if(OutBufferIndex%10==0)myMillis++;
   OutBufferIndex++;
 }

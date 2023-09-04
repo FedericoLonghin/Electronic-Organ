@@ -24,3 +24,13 @@ void tick() {
   if (debug_counterIteration >= debug_counterMaxIteration) endCounter();
   }
 }
+
+void printFloatArray(float arr[],int len){
+    Serial.println("Arr:");
+  for (int i=0;i<len;i++){
+    Serial.print(i);
+    Serial.print("\t");
+    Serial.println(arr[i]);
+  }
+    Serial.println("End.");
+}
