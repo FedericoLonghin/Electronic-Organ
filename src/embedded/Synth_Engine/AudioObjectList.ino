@@ -4,15 +4,17 @@ public:
   int volume;
   int frequency;
   int id;
-  unsigned long eventTime = 0;
+  unsigned long eventTime;
   bool isKeyPressed = false;
 
   AudioObject(int id, int vol, unsigned long stime) {
+
     this->volume = vol;
     this->frequency = NoteFrequency[id % 12] * pow(2, id / 12);
     this->id = id;
     this->eventTime = stime;
     this->isKeyPressed = true;
+    // Serial.printf("Created Obj with time:%d\t current:%d\n", this->eventTime,currentTime_ms);
   }
 };
 
@@ -32,7 +34,7 @@ bool AudioObjectListMenager::start(int id) {
     if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, 10, millis());
+    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, 10, currentTime_ms);
 
     _currentlyPlayingNote++;
   }
@@ -73,10 +75,10 @@ void AudioObjectListMenager::cleanSilentObjects() {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
     // Serial.print("aa");
     // Serial.println(i);
-      if(!AudioObjectList[i]->isKeyPressed)
-      if(currentTime_ms>AudioObjectList[i]->eventTime+env.Env_Rt)
-       stop(AudioObjectList[i]->id);
-      return;
+    if (!AudioObjectList[i]->isKeyPressed)
+      if (currentTime_ms > AudioObjectList[i]->eventTime + env.Env_Rt)
+        stop(AudioObjectList[i]->id);
+    return;
   }
 }
 

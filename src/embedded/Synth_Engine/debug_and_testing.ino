@@ -25,7 +25,7 @@ void tick() {
   }
 }
 
-void printFloatArray(float arr[],int len){
+void printArray(int arr[],int len){
     Serial.println("Arr:");
   for (int i=0;i<len;i++){
     Serial.print(i);

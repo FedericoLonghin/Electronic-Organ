@@ -39,7 +39,7 @@ void generateAudioChunk(int len) {
   int noteNum = AudioEngine.getActiveNotesNumber();
   float noteAmpl[noteNum] = { 0 };
   int amp = 0;
-  
+
   for (int a = 0; a < len; a++) {
     if (1 || FillBufferIndex % 50 == 0) {
       // for (int f = 0; f < noteNum; f++) {
@@ -52,7 +52,7 @@ void generateAudioChunk(int len) {
     for (int f = 0; f < noteNum; f++) {
       val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate)) * divider;
       // val = 0;
-       totalWaveVal += (WaveFormTable[WaveType][val] * env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
+      totalWaveVal += (WaveFormTable[WaveType][val] * env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
       // totalWaveVal += (WaveFormTable[WaveType][val] * env.getAmplitudeInt(startnote, true));
       //  Serial.printf("%d: %d\n",f,env.getAmplitude(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
       // envelopedVal = (WaveFormTable[WaveType][val] * env.attackDecayTableInt[myMillis-startnote]);

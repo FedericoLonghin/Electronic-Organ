@@ -1,5 +1,5 @@
 #define Sample_num 112
-#define Sample_rate 10000
+#define Sample_rate 20000
 
 #define MaxWaveTypes 4
 #define WAVETYPE_SIN 0
@@ -21,29 +21,29 @@ public:
   // float Env_S_l = 0.0f;
   // int Env_R_t = 1000;
 
-  int Env_At = 50;
+//Envelope Attack
+  int Env_At = 555;
   int Env_Al = 255;
-  int Env_Dt = 100;
+  int Env_Dt = 1000;
   int Env_Sl = 180;
-  int Env_Rt = 500;
+  int Env_Rt = 800;
+  float Env_ACoeff = 1.01f;
+  bool Env_ALinear=true;
 
-  float getAmplitude(unsigned long eventTime, bool isKeyPressed);
   int getAmplitudeInt(unsigned long eventTime, bool isKeyPressed);
-  float oldgetAmplitude(unsigned long eventTime, bool isKeyPressed);
   void reloadEnvelopeTable();
-  float attackDecayTable[Envelope_AttackDecay_Table_Length];
+  // float attackDecayTable[Envelope_AttackDecay_Table_Length];
   int attackDecayTableInt[Envelope_AttackDecay_Table_Length];
-  float releaseTable[Envelope_Release_Table_Length];
+  // float releaseTable[Envelope_Release_Table_Length];
   int releaseTableInt[Envelope_Release_Table_Length];
 };
 #define MAX_AUDIO_OBJECT_NUMBER 20
-
 class AudioObject;
 
 class AudioObjectListMenager {
 private:
   static const int _MAX_AUDIO_OBJECT_NUMBER = 20;
-  int _currentlyPlayingNote=0;
+  int _currentlyPlayingNote = 0;
 public:
 
   AudioObject *AudioObjectList[_MAX_AUDIO_OBJECT_NUMBER];
@@ -62,7 +62,7 @@ public:
 AudioObjectListMenager AudioEngine;
 
 class Sound {
-  public:
+public:
   Envelope Env;
   int Volume;
   int WaveType;
@@ -70,5 +70,5 @@ class Sound {
 
 
 Envelope env;
-//Faster millis alternative
+//Faster millis() alternative
 unsigned long currentTime_ms = 0;
