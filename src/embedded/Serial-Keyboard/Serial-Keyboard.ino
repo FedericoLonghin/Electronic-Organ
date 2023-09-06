@@ -1,3 +1,5 @@
+#define SERIAL_DEBUG
+
 #include "settings.h"
 #include "MIDIUSB.h"
 
@@ -8,7 +10,10 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 
 void setup() {
+
+#ifdef SERIAL_DEBUG
   Serial.begin(115200);
+#endif
   Serial1.begin(9600);
   pinMode(CLK, OUTPUT);
   pinMode(LD, OUTPUT);
@@ -22,11 +27,13 @@ void setup() {
 
   lcd.init();
   lcd.backlight();
+#ifdef SERIAL_DEBUG
   Serial.println("Serial Keyboard Started! \n");
+#endif
 }
 
 void loop() {
-// Serial.println("loop");
+  // Serial.println("loop");
 
   //  printAnalogSliders();
   //printAnalogBuffer();
@@ -42,7 +49,7 @@ void loop() {
   // printArray(keyStatus, BINARY_IN_LENGHT);
   //Serial.println();
 
-  
+
   // if (showChords) {
   //   checkNewChord();
   // }

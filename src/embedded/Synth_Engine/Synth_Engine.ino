@@ -12,7 +12,7 @@ void setup() {
   setupCore0();
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
   env.reloadEnvelopeTable();
-   printArray(env.attackDecayTableInt,env.Env_At);
+  //  printArray(env.attackDecayTableInt,env.Env_At);
   // for (int i = 0; i < Envelope_Release_Table_Length; i++) {
   //   Serial.printf("%d\t%d\n", i, env.releaseTableInt[i]);
   // }
@@ -43,7 +43,7 @@ void loop() {
 #ifdef SERIAL_DEBUG
       Serial.printf("Playing note %d\n", note);
 #endif
-
+      fadeiter = 0;
       AudioEngine.start(note);
 
 

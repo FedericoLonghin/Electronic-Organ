@@ -34,32 +34,46 @@ unsigned long envelopedVal;
 int totalWaveVal;
 float divider = S_n / (float)(S_rate);
 float ampl;
-
+bool tmpOut = false;
+bool tmpFill = false;
 void generateAudioChunk(int len) {
   int noteNum = AudioEngine.getActiveNotesNumber();
-  float noteAmpl[noteNum] = { 0 };
+  byte noteAmpl[noteNum] = { 0 };
   int amp = 0;
-
   for (int a = 0; a < len; a++) {
-    if (1 || FillBufferIndex % 50 == 0) {
-      // for (int f = 0; f < noteNum; f++) {
+    if (OutBufferIndex < 5000) {
+      tmpOut = true;
+    } else if (tmpOut) {
+      Serial.println("OutBufferOver");
+      tmpOut = false;
+    }
+    if (FillBufferIndex < 5000) {
+      tmpFill = true;
+    } else if (tmpFill) {
+      Serial.println("FillBufferOver");
+      tmpFill = false;
+    }
+    if (FillBufferIndex % 4 == 0) {
+      for (int f = 0; f < noteNum; f++) {
 
-      //   //noteAmpl[f] = env.getAmplitude(AudioEngine.AudioObjectList[f]->eventTime,AudioEngine.AudioObjectList[f]->isKeyPressed);
-      //   // Serial.println(noteAmpl[f]);
-      // }
+        noteAmpl[f] = env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed);
+        //   // Serial.println(noteAmpl[f]);
+      }
     }
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
       val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (S_rate)) * divider;
       // val = 0;
-      totalWaveVal += (WaveFormTable[WaveType][val] * env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
+      totalWaveVal += (WaveFormTable[WaveType][val] * noteAmpl[f]);
+      // totalWaveVal += (WaveFormTable[WaveType][val] *env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed) );
+
       // totalWaveVal += (WaveFormTable[WaveType][val] * env.getAmplitudeInt(startnote, true));
-      //  Serial.printf("%d: %d\n",f,env.getAmplitude(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
+      // Serial.printf("%d: %d\n",f,env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed));
       // envelopedVal = (WaveFormTable[WaveType][val] * env.attackDecayTableInt[myMillis-startnote]);
       // totalWaveVal += envelopedVal;
     }
 
-    totalWaveVal /= 765;
+    totalWaveVal /= 850;
     // totalWaveVal *= 0.3f;
     wave[FillBufferIndex] = totalWaveVal < 255 ? totalWaveVal : 255;
     // Serial.print(0);

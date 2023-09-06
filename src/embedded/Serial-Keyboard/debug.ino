@@ -1,5 +1,7 @@
 
 void printAnalogBuffer() {
+#ifdef SERIAL_DEBUG
+
   Serial.println("---------------");
   for (byte i = 0; i < 16; i++) {
     //Serial.print("let: ");
@@ -9,9 +11,12 @@ void printAnalogBuffer() {
     //Serial.print(istantAnalogValue(i));
     Serial.print("\t");
   }
+#endif
 }
 
 void printAnalogSliders() {
+#ifdef SERIAL_DEBUG
+
   Serial.print("Slid_1:");
   Serial.print(analogVal[ANALOG_PEDAL_VOLUME]);
   Serial.print(",");
@@ -43,9 +48,12 @@ void printAnalogSliders() {
   //Serial.print(analogVal[3]);
 
   Serial.println();
+    #endif
+
 }
 
 void printRAWAalog() {
+  #ifdef SERIAL_DEBUG
   for (int i = 0; i < 16; i++) {
     Serial.print(istantAnalogValue(i));
     Serial.print("\t");
@@ -53,17 +61,27 @@ void printRAWAalog() {
   // Serial.print(analogRead(A5));
   // Serial.print("\t");
   Serial.println();
+    #endif
+
 }
 
 
 void printArray(bool array[], int size) {
+  #ifdef SERIAL_DEBUG
+
   for (int i = 0; i < size; i++) {
     Serial.print(array[i]);
   }
+    #endif
+
 }
 
 void printUpperKeyboard() {
+  #ifdef SERIAL_DEBUG
+
   for (byte i = 0; i < UPPER_KEYBOARD_LENGTH; i++) {
     Serial.print(lowerKeyboardStatus[i]);
   }
+    #endif
+
 }

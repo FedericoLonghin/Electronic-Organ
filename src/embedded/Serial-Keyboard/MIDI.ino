@@ -10,7 +10,10 @@ void noteOn(byte channel, byte pitch, byte velocity) {
   // str += "\n";
   str=formatSerialMessage(str,10);
   Serial1.print(str);
+    #ifdef SERIAL_DEBUG
+
   Serial.println(str);
+      #endif
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
@@ -23,8 +26,10 @@ void noteOff(byte channel, byte pitch, byte velocity) {
   // str += "\n";
   str=formatSerialMessage(str,10);
   Serial1.print(str);
-  Serial.println(str);
+    #ifdef SERIAL_DEBUG
 
+  Serial.println(str);
+    #endif
   // midiEventPacket_t noteOff = { 0x08, 0x80 | channel, pitch, velocity };
   // MidiUSB.sendMIDI(noteOff);
 }

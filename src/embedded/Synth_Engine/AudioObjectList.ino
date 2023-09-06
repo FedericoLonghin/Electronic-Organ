@@ -61,16 +61,7 @@ bool AudioObjectListMenager::stop(int id) {
   return true;
 }
 
-void AudioObjectListMenager::cleanSilentObjects(Envelope _env) {
-  for (int i = 0; i < _currentlyPlayingNote; i++) {
-    // Serial.print("aa");
-    // Serial.println(i);
-    //   if(!AudioObjectList[i]->isKeyPressed)
-    //   if(currentTime_ms>AudioObjectList[i]->eventTime+_env.Env_Rt)
-    //   // stop(AudioObjectList[i]->id);
-    //   return;
-  }
-}
+
 void AudioObjectListMenager::cleanSilentObjects() {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
     // Serial.print("aa");
