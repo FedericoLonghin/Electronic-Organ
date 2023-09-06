@@ -8,8 +8,9 @@
 #define WAVETYPE_SQUARE 3
 
 byte wave[Sample_rate];
-int OutBufferIndex = 0;
-int FillBufferIndex = 0;
+unsigned int OutBufferIndex = 0;
+unsigned int FillBufferIndex = 0;
+bool newSampleREQ=false;
 
 #define Envelope_AttackDecay_Table_Length 10000
 #define Envelope_Release_Table_Length 5000
@@ -22,15 +23,16 @@ public:
   // int Env_R_t = 1000;
 
   //Envelope Attack
-  int Env_At = 50;
+  int Env_At = 4000;
   int Env_Al = 255;
-  int Env_Dt = 100;
-  int Env_Sl =180 ;
-  int Env_Rt = 1000;
+  int Env_Dt = 4000;
+  int Env_Sl =100 ;
+  int Env_Rt = 4000;
   float Env_ACoeff = 1.1f;
   bool Env_ALinear = true;
 
   int getAmplitudeInt(unsigned long eventTime, bool isKeyPressed);
+  int getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed);
   void reloadEnvelopeTable();
   // float attackDecayTable[Envelope_AttackDecay_Table_Length];
   byte attackDecayTableInt[Envelope_AttackDecay_Table_Length];

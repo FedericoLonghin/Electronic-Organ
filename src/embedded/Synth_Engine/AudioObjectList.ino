@@ -5,6 +5,7 @@ public:
   int frequency;
   int id;
   unsigned long eventTime;
+  unsigned long ticksFromLastEvent;
   bool isKeyPressed = false;
 
   AudioObject(int id, int vol, unsigned long stime) {
@@ -14,6 +15,7 @@ public:
     this->id = id;
     this->eventTime = stime;
     this->isKeyPressed = true;
+    this->ticksFromLastEvent=0;
     // Serial.printf("Created Obj with time:%d\t current:%d\n", this->eventTime,currentTime_ms);
   }
 };
@@ -47,6 +49,7 @@ bool AudioObjectListMenager::release(int id) {
   if (locat == -1) return false;
   AudioObjectList[locat]->isKeyPressed = false;
   AudioObjectList[locat]->eventTime = currentTime_ms;
+  AudioObjectList[locat]->ticksFromLastEvent = 0;
   return true;
 }
 

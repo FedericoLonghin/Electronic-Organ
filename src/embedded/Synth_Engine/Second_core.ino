@@ -10,11 +10,16 @@ void setupCore0() {
     &Core0,
     0);
 }
-
+int c = 0;
 //Core 0 Service Routine
 void Core0_SR(void* parameter) {
   for (;;) {
-    generateAudioChunk(1000);
+    if (newSampleREQ) {
+      newSampleREQ = false;
+      generateAudioChunk(MAGIC_BUFFER_OFFSET);
+    }
+    c++;
+    if (c > 10000) c = 0;
   }
 }
 //debug
@@ -34,29 +39,21 @@ unsigned long envelopedVal;
 int totalWaveVal;
 float divider = S_n / (float)(S_rate);
 float ampl;
-bool tmpOut = false;
-bool tmpFill = false;
+int divider_sp = 360;
+int divider_pv = 360;
+#define DIVIDER_INC_VAL 1
 void generateAudioChunk(int len) {
+  // Serial.println("Generated Audio Chunk");
   int noteNum = AudioEngine.getActiveNotesNumber();
   byte noteAmpl[noteNum] = { 0 };
   int amp = 0;
   for (int a = 0; a < len; a++) {
-    if (OutBufferIndex < 5000) {
-      tmpOut = true;
-    } else if (tmpOut) {
-      Serial.println("OutBufferOver");
-      tmpOut = false;
-    }
-    if (FillBufferIndex < 5000) {
-      tmpFill = true;
-    } else if (tmpFill) {
-      Serial.println("FillBufferOver");
-      tmpFill = false;
-    }
-    if (FillBufferIndex % 4 == 0) {
+
+    if (FillBufferIndex % 1 == 0) {
       for (int f = 0; f < noteNum; f++) {
 
-        noteAmpl[f] = env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime, AudioEngine.AudioObjectList[f]->isKeyPressed);
+        noteAmpl[f] = env.getNewAmplitudeInt(AudioEngine.AudioObjectList[f]->ticksFromLastEvent++, AudioEngine.AudioObjectList[f]->isKeyPressed);
+        // noteAmpl[f] = env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime++, AudioEngine.AudioObjectList[f]->isKeyPressed);
         //   // Serial.println(noteAmpl[f]);
       }
     }
@@ -73,7 +70,16 @@ void generateAudioChunk(int len) {
       // totalWaveVal += envelopedVal;
     }
 
-    totalWaveVal /= 850;
+    // divider_sp = 360 * noteNum;
+    // if (noteNum > 0) {
+    //   if (divider_pv > divider_sp) divider_pv -= DIVIDER_INC_VAL;
+    //   else if (divider_pv < divider_sp) divider_pv += DIVIDER_INC_VAL;
+    //   totalWaveVal /= divider_pv;
+    //   // Serial.printf("sp:%d\tpv:%d\n", divider_sp, divider_pv);
+    // }
+
+
+     totalWaveVal /= 850;
     // totalWaveVal *= 0.3f;
     wave[FillBufferIndex] = totalWaveVal < 255 ? totalWaveVal : 255;
     // Serial.print(0);

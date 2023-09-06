@@ -34,7 +34,7 @@
 //   return 0;
 // }
 int Envelope::getAmplitudeInt(unsigned long eventTime, bool isKeyPressed) {
-  short noteLife_ms = currentTime_ms - eventTime;
+  unsigned short noteLife_ms = currentTime_ms - eventTime;
   if (isKeyPressed) {
     if (noteLife_ms < Env_At + Env_Dt) {
       // return 50;
@@ -44,6 +44,18 @@ int Envelope::getAmplitudeInt(unsigned long eventTime, bool isKeyPressed) {
   }
   if (noteLife_ms < Env_Rt)
     return releaseTableInt[noteLife_ms];
+  return 0;
+}
+int Envelope::getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed) {
+  if (isKeyPressed) {
+    if (noteLife < Env_At + Env_Dt) {
+      // return 50;
+   return attackDecayTableInt[noteLife];
+    }
+    return Env_Sl;
+  }
+  if (noteLife < Env_Rt)
+    return releaseTableInt[noteLife];
   return 0;
 }
 

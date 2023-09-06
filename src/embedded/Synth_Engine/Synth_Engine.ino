@@ -17,8 +17,24 @@ void setup() {
   //   Serial.printf("%d\t%d\n", i, env.releaseTableInt[i]);
   // }
 }
-#define MESSAGE_FIXED_LENGTH 10
+#define MAGIC_BUFFER_OFFSET 40
+bool tmpOut = false;
+bool tmpFill = false;
 void loop() {
+  if (OutBufferIndex - FillBufferIndex < 10) Serial.println("Err");
+  // Serial.printf("newSAmpleReq: %d\n",newSampleREQ);
+  // if (OutBufferIndex < 5000) {
+  //   tmpOut = true;
+  // } else if (tmpOut) {
+  //   Serial.println("OutBufferOver");
+  //   tmpOut = false;
+  // }
+  // if (FillBufferIndex < 5000) {
+  //   tmpFill = true;
+  // } else if (tmpFill) {
+  //   Serial.println("FillBufferOver");
+  //   tmpFill = false;
+  // }
   char* msg_char = "";
   int msg_len_i = 0;
   bool payload = false;
