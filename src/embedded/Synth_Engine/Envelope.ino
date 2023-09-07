@@ -49,7 +49,7 @@ int Envelope::getAmplitudeInt(unsigned long eventTime, bool isKeyPressed) {
 
 
 
-int Envelope::getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint) {
+int Envelope::getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, unsigned long *toBeDeleted) {
   noteLife /= 10;  //changing referement to millisecond
   if (isKeyPressed) {
     if (noteLife < Env_At + Env_Dt) {
@@ -58,10 +58,12 @@ int Envelope::getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsi
     }
     return Env_Sl;
   }
-  if (noteLife < Env_Rt)
+  if (releaseStartingPoint + noteLife < Env_R_completeTableLength) {
     // return releaseTableInt[noteLife];
     // Serial.printf("relStartPoint:%d\tNotelife:%d\n",releaseStartingPoint,noteLife);
     return completeReleaseTableInt[releaseStartingPoint + noteLife];
+  }
+  *toBeDeleted = true;
   return 0;
 }
 
@@ -96,14 +98,15 @@ void Envelope::reloadEnvelopeTable() {
   }
 
   //Complete Release
-  int newReleaseTableLenght = Env_Rt * 255 / Env_Sl;
-  for (int i = 0; i < newReleaseTableLenght; i++) {
-    completeReleaseTableInt[i] = (255 - (i / (float)newReleaseTableLenght) * 255);
+  Env_R_completeTableLength = Env_Rt * 255 / Env_Sl;
+
+  for (int i = 0; i < Env_R_completeTableLength; i++) {
+    completeReleaseTableInt[i] = (255 - (i / (float)Env_R_completeTableLength) * 255);
   }
 
   //Reverse Complete Release
   for (int i = 0; i < 255; i++) {
-    ReverseCompleteReleaseTableInt[i] = (255 - i) * newReleaseTableLenght / 255;
+    ReverseCompleteReleaseTableInt[i] = (255 - i) * Env_R_completeTableLength / 255;
   }
   Env_R_startIndex = getReleaseIndex(Env_Sl);
 }

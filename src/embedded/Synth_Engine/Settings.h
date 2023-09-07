@@ -23,17 +23,18 @@ public:
   // int Env_R_t = 1000;
 
   //Envelope Attack
-  int Env_At = 180;
+  int Env_At = 80;
   int Env_Al = 200;
-  int Env_Dt = 400;
+  int Env_Dt = 100;
   int Env_Sl = 100;
-  int Env_Rt = 1000;
+  int Env_Rt = 800;
   int Env_R_startIndex = 0;
+  int Env_R_completeTableLength = 0;
   float Env_ACoeff = 1.1f;
   bool Env_ALinear = true;
 
   int getAmplitudeInt(unsigned long eventTime, bool isKeyPressed);
-  int getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint);
+  int getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, unsigned long *toBeDeleted);
   void reloadEnvelopeTable();
   // float attackDecayTable[Envelope_AttackDecay_Table_Length];
   byte attackDecayTableInt[Envelope_AttackDecay_Table_Length];
@@ -42,7 +43,6 @@ public:
   byte completeReleaseTableInt[Envelope_Release_Table_Length];
   unsigned int ReverseCompleteReleaseTableInt[255];
   int getReleaseIndex(int val);
-
 };
 byte fadeiter = 0;
 
