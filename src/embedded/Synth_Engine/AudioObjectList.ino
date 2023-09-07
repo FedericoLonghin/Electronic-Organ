@@ -1,25 +1,19 @@
 
 class AudioObject {
 public:
-  int volume;
   int frequency;
   int id;
-  unsigned long eventTime;
   unsigned long ticksFromLastEvent;
   unsigned int releaseStartingPoint;
-  bool isKeyPressed = false;
-  bool justReleased = false;
-  unsigned long toBeDeleted = false;
+  bool isKeyPressed;
+  bool toBeDeleted;
 
-  AudioObject(int id, int vol, unsigned long stime) {
-
-    this->volume = vol;
+  AudioObject(int id) {
     this->frequency = NoteFrequency[id % 12] * pow(2, id / 12);
     this->id = id;
-    this->eventTime = stime;
     this->isKeyPressed = true;
     this->ticksFromLastEvent = 0;
-    // Serial.printf("Created Obj with time:%d\t current:%d\n", this->eventTime,currentTime_ms);
+    this->toBeDeleted = false;
   }
 };
 
@@ -33,13 +27,13 @@ bool AudioObjectListMenager::start(int id) {
   if (id <= 0) return 0;
   int locat = find(id);
   if (locat != -1) {  //this note is already present
-    AudioObjectList[locat] = new AudioObject(id, 10, currentTime_ms);
+    AudioObjectList[locat] = new AudioObject(id);
   } else {
 
     if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, 10, currentTime_ms);
+    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id);
 
     _currentlyPlayingNote++;
   }
@@ -50,10 +44,8 @@ bool AudioObjectListMenager::start(int id) {
 bool AudioObjectListMenager::release(int id) {
   int locat = find(id);
   if (locat == -1) return false;
-  AudioObjectList[locat]->releaseStartingPoint = env.getReleaseIndex(env.getNewAmplitudeInt(AudioObjectList[locat]->ticksFromLastEvent, true, 0, 0));
-  // Serial.printf("EventTime:%d\tnote Ampl: %d\tindex:%d\trecalc:%d\n",AudioObjectList[locat]->ticksFromLastEvent, env.getNewAmplitudeInt(AudioObjectList[locat]->ticksFromLastEvent, true, 0),AudioObjectList[locat]->releaseStartingPoint,env.getNewAmplitudeInt(0, false, AudioObjectList[locat]->releaseStartingPoint));
+  AudioObjectList[locat]->releaseStartingPoint = env.getReleaseIndex(env.getAmplitude(AudioObjectList[locat]->ticksFromLastEvent, true, 0, 0));
   AudioObjectList[locat]->isKeyPressed = false;
-  AudioObjectList[locat]->eventTime = currentTime_ms;
   AudioObjectList[locat]->ticksFromLastEvent = 0;
 
   return true;
@@ -73,12 +65,9 @@ bool AudioObjectListMenager::stop(int id) {
 
 void AudioObjectListMenager::cleanSilentObjects() {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
-    // Serial.print("aa");
-    // Serial.println(i);
-    if (AudioObjectList[i]->toBeDeleted){
 
-      Serial.println("Deleting note");
-    stop(AudioObjectList[i]->id);
+    if (AudioObjectList[i]->toBeDeleted) {
+      stop(AudioObjectList[i]->id);
     }
     return;
   }

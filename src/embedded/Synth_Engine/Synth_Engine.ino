@@ -12,34 +12,13 @@ void setup() {
   setupCore0();
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
   env.reloadEnvelopeTable();
-  //  printArray(env.attackDecayTableInt,env.Env_At);
-  // for (int i = 0; i < Envelope_Release_Table_Length; i++) {
-  //   Serial.printf("%d\t%d\n", i, env.releaseTableInt[i]);
-  // }
-  // for(int i=0;i<3000;i++){
-
-  // Serial.printf("complete[%d]=%d , reverse[complete[Ans]]=%d\n",i,env.completeReleaseTableInt[i],env.ReverseCompleteReleaseTableInt[env.completeReleaseTableInt[i]]);
-  // }
 }
 #define MAGIC_BUFFER_OFFSET 40
-bool tmpOut = false;
-bool tmpFill = false;
+
 void loop() {
+
   if (OutBufferIndex - FillBufferIndex < 10) Serial.println("Err");
-  // Serial.printf("newSAmpleReq: %d\n",newSampleREQ);
-  // if (OutBufferIndex < 5000) {
-  //   tmpOut = true;
-  // } else if (tmpOut) {
-  //   Serial.println("OutBufferOver");
-  //   tmpOut = false;
-  // }
-  // if (FillBufferIndex < 5000) {
-  //   tmpFill = true;
-  // } else if (tmpFill) {
-  //   Serial.println("FillBufferOver");
-  //   tmpFill = false;
-  // }
-  char* msg_char = "";
+
   int msg_len_i = 0;
   bool payload = false;
   String msg = "";
@@ -53,17 +32,11 @@ void loop() {
   if (payload) {
 
     if (msg.startsWith("N-On")) {
-
-#ifdef SERIAL_DEBUG
-      startCounter(100, false);
-#endif
-
       int note = msg.substring(5).toInt();
 
 #ifdef SERIAL_DEBUG
       Serial.printf("Playing note %d\n", note);
 #endif
-      fadeiter = 0;
       AudioEngine.start(note);
 
 
