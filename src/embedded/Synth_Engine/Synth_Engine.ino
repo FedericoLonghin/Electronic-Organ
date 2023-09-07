@@ -16,6 +16,10 @@ void setup() {
   // for (int i = 0; i < Envelope_Release_Table_Length; i++) {
   //   Serial.printf("%d\t%d\n", i, env.releaseTableInt[i]);
   // }
+  // for(int i=0;i<3000;i++){
+
+  // Serial.printf("complete[%d]=%d , reverse[complete[Ans]]=%d\n",i,env.completeReleaseTableInt[i],env.ReverseCompleteReleaseTableInt[env.completeReleaseTableInt[i]]);
+  // }
 }
 #define MAGIC_BUFFER_OFFSET 40
 bool tmpOut = false;

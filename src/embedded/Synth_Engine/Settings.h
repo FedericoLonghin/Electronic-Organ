@@ -10,7 +10,7 @@
 byte wave[Sample_rate];
 unsigned int OutBufferIndex = 0;
 unsigned int FillBufferIndex = 0;
-bool newSampleREQ=false;
+bool newSampleREQ = false;
 
 #define Envelope_AttackDecay_Table_Length 10000
 #define Envelope_Release_Table_Length 5000
@@ -23,23 +23,28 @@ public:
   // int Env_R_t = 1000;
 
   //Envelope Attack
-  int Env_At = 4000;
-  int Env_Al = 255;
-  int Env_Dt = 4000;
-  int Env_Sl =100 ;
-  int Env_Rt = 4000;
+  int Env_At = 180;
+  int Env_Al = 200;
+  int Env_Dt = 400;
+  int Env_Sl = 100;
+  int Env_Rt = 1000;
+  int Env_R_startIndex = 0;
   float Env_ACoeff = 1.1f;
   bool Env_ALinear = true;
 
   int getAmplitudeInt(unsigned long eventTime, bool isKeyPressed);
-  int getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed);
+  int getNewAmplitudeInt(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint);
   void reloadEnvelopeTable();
   // float attackDecayTable[Envelope_AttackDecay_Table_Length];
   byte attackDecayTableInt[Envelope_AttackDecay_Table_Length];
   // float releaseTable[Envelope_Release_Table_Length];
   byte releaseTableInt[Envelope_Release_Table_Length];
+  byte completeReleaseTableInt[Envelope_Release_Table_Length];
+  unsigned int ReverseCompleteReleaseTableInt[255];
+  int getReleaseIndex(int val);
+
 };
-byte fadeiter=0;
+byte fadeiter = 0;
 
 #define MAX_AUDIO_OBJECT_NUMBER 20
 class AudioObject;

@@ -52,9 +52,9 @@ void generateAudioChunk(int len) {
     if (FillBufferIndex % 1 == 0) {
       for (int f = 0; f < noteNum; f++) {
 
-        noteAmpl[f] = env.getNewAmplitudeInt(AudioEngine.AudioObjectList[f]->ticksFromLastEvent++, AudioEngine.AudioObjectList[f]->isKeyPressed);
+        noteAmpl[f] = env.getNewAmplitudeInt(AudioEngine.AudioObjectList[f]->ticksFromLastEvent++, AudioEngine.AudioObjectList[f]->isKeyPressed, AudioEngine.AudioObjectList[f]->releaseStartingPoint);
         // noteAmpl[f] = env.getAmplitudeInt(AudioEngine.AudioObjectList[f]->eventTime++, AudioEngine.AudioObjectList[f]->isKeyPressed);
-        //   // Serial.println(noteAmpl[f]);
+        // Serial.println(noteAmpl[f]);
       }
     }
     totalWaveVal = 0;
