@@ -11,14 +11,15 @@ void setup() {
   setupTimerInterrupt();
   setupCore0();
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
-  env.reloadEnvelopeTable();
+  env.reloadTable();
+  Wavetable_reloadTable();
+  for (int i = 0; i < Wavetable_Length; i++) {
+    Serial.println(Wavetable_table[Wavetable_waveForm][i]);
+  }
+  // tuningReq();
 }
-#define MAGIC_BUFFER_OFFSET 40
 
 void loop() {
-
-  if (OutBufferIndex - FillBufferIndex < 10) Serial.println("Err");
-
   int msg_len_i = 0;
   bool payload = false;
   String msg = "";
@@ -39,7 +40,6 @@ void loop() {
 #endif
       AudioEngine.start(note);
 
-
     } else if (msg.startsWith("N-Off")) {
       int note = msg.substring(6).toInt();
 
@@ -48,8 +48,23 @@ void loop() {
 #endif
 
       AudioEngine.release(note);
+
+    } else if (msg.startsWith("CC")) {
+      Serial.println(msg);
+      byte control = msg.substring(3, 6).toInt();
+      byte value = msg.substring(6, 10).toInt();
+#ifdef SERIAL_DEBUG
+      Serial.printf("Control Change Message: %d %d\n", control, value);
+#endif
+      if (control == 24) tuningReq();
     }
     payload = false;
   }
   AudioEngine.cleanSilentObjects();
+}
+
+void tuningReq() {
+  AudioEngine.stopAll();
+  Serial.println("TuneREQ.");
+  Serial2.println("TuneREQ 0.");
 }

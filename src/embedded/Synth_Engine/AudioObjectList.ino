@@ -9,7 +9,7 @@ public:
   bool toBeDeleted;
 
   AudioObject(int id) {
-    this->frequency = NoteFrequency[id % 12] * pow(2, id / 12);
+    this->frequency = NoteFrequency[id % 12] / pow(2, (8 - (id / 12)));
     this->id = id;
     this->isKeyPressed = true;
     this->ticksFromLastEvent = 0;
@@ -83,4 +83,7 @@ int AudioObjectListMenager::find(int id) {
 
 int AudioObjectListMenager::getActiveNotesNumber() {
   return _currentlyPlayingNote;
+}
+void AudioObjectListMenager::stopAll() {
+  _currentlyPlayingNote=0;
 }

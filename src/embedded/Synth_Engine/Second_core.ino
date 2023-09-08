@@ -17,7 +17,7 @@ void Core0_SR(void* parameter) {
   for (;;) {
     if (newSampleREQ) {
       newSampleREQ = false;
-      generateAudioChunk(MAGIC_BUFFER_OFFSET);
+      generateAudioChunk(MAGIC_BUFFER_OFFSET, newSampleREQ_SectionToFill);
     }
     c++;  //just for triggering WDT
   }
@@ -25,9 +25,9 @@ void Core0_SR(void* parameter) {
 
 unsigned long val;
 unsigned int totalWaveVal;
-float divider = Sample_num / (float)(Sample_rate);
+float divider = Wavetable_Length / (float)(Sample_Rate);
 
-void generateAudioChunk(int len) {
+void generateAudioChunk(int len, bool _section) {
   int noteNum = AudioEngine.getActiveNotesNumber();
   byte noteAmpl[noteNum] = { 0 };
   for (int a = 0; a < len; a++) {
@@ -40,18 +40,19 @@ void generateAudioChunk(int len) {
     }
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
-      val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (Sample_rate)) * divider;
-      totalWaveVal += (WaveFormTable[WaveType][val] * noteAmpl[f]);
+      val = ((AudioEngine.fastNoteArray[f] * FillBufferIndex) % (Sample_Rate)) * divider;
+      totalWaveVal += (Wavetable_table[Wavetable_waveForm][val] * noteAmpl[f]);
+      // totalWaveVal += (WaveFormTable[WaveType][val] * noteAmpl[f]);
     }
 
 
 
 
-    totalWaveVal /= 850;
-    wave[FillBufferIndex] = totalWaveVal < 255 ? totalWaveVal : 255;
+    totalWaveVal /= 2400;
+    wave[MAGIC_BUFFER_OFFSET * _section + a] = totalWaveVal < 255 ? totalWaveVal : 255;
 
     FillBufferIndex++;
-    if (FillBufferIndex >= Sample_rate) {
+    if (FillBufferIndex >= Sample_Rate) {
       FillBufferIndex = 0;
     }
   }

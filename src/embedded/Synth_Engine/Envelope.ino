@@ -1,5 +1,5 @@
 int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, bool *toBeDeleted) {
-  noteLife /= 10;  //changing referement to millisecond
+  noteLife /= (Sample_Rate / 1000);  //changing referement to millisecond
   if (isKeyPressed) {
     if (noteLife < Env_At + Env_Dt) {
       return attackDecayTable[noteLife];
@@ -13,7 +13,7 @@ int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned i
   return 0;
 }
 
-void Envelope::reloadEnvelopeTable() {
+void Envelope::reloadTable() {
   //Attack
   if (Env_ALinear) {
     for (int i = 0; i < Env_At; i++) {

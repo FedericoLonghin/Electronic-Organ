@@ -33,6 +33,26 @@ void setup() {
 }
 
 void loop() {
+
+  int msg_len_i = 0;
+  bool payload = false;
+  String msg = "";
+  if (Serial1.available()) {
+    msg = Serial1.readStringUntil('.');
+    payload = true;
+    msg_len_i++;
+    // delay(5);
+  }
+
+  if (payload) {
+
+    if (msg.startsWith("TuneREQ")) {
+      shiftTone = 0;
+    }
+    payload = false;
+  }
+
+
   // Serial.println("loop");
 
   //  printAnalogSliders();

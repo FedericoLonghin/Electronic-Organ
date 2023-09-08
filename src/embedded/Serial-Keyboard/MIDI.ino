@@ -8,12 +8,12 @@ void noteOn(byte channel, byte pitch, byte velocity) {
   // str += " ";
   // str += velocity;
   // str += "\n";
-  str=formatSerialMessage(str,10);
+  str = formatSerialMessage(str, 10);
   Serial1.print(str);
-    #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
 
   Serial.println(str);
-      #endif
+#endif
 }
 
 void noteOff(byte channel, byte pitch, byte velocity) {
@@ -24,12 +24,12 @@ void noteOff(byte channel, byte pitch, byte velocity) {
   // str += " ";
   // str += velocity;
   // str += "\n";
-  str=formatSerialMessage(str,10);
+  str = formatSerialMessage(str, 10);
   Serial1.print(str);
-    #ifdef SERIAL_DEBUG
+#ifdef SERIAL_DEBUG
 
   Serial.println(str);
-    #endif
+#endif
   // midiEventPacket_t noteOff = { 0x08, 0x80 | channel, pitch, velocity };
   // MidiUSB.sendMIDI(noteOff);
 }
@@ -40,9 +40,16 @@ void programChange(byte channel, byte program) {  //deprecated
 }
 
 void controlChange(byte channel, byte control, byte value) {  //deprecated
+  String str = "CC ";
+  str += getFormattedNumber(control, 3);
+  str += " ";
+  str += getFormattedNumber(value, 3);
+  str = formatSerialMessage(str, 10);
+  Serial1.print(str);
 
-  // midiEventPacket_t event = {0x7b, 0xB0 | channel, control, value};
-  // MidiUSB.sendMIDI(event);
+#ifdef SERIAL_DEBUG
+  Serial.println(str);
+#endif
 }
 
 String formatSerialMessage(String str, int len) {
@@ -53,5 +60,11 @@ String formatSerialMessage(String str, int len) {
   //   while (str.length() < len) { str += "."; }
   //   return str;
   // }
-  return str+='.';
+  return str += '.';
+}
+
+String getFormattedNumber(byte num, byte final_length) {
+  String str = (String)num;
+  while (str.length() < final_length) { str = "0" + str; }
+  return str;
 }
