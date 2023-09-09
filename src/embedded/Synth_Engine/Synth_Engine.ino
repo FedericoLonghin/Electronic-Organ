@@ -13,13 +13,9 @@ void setup() {
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
   env.reloadTable();
   Wavetable_reloadTable();
-  for (int i = 0; i < 255; i++) {
-    Serial.printf("i:%d\ttab:%d\trevTab:%d\n",i,env.attackDecayTable[i],env.ReverseAttackTable[env.attackDecayTable[i]]);
-  }
-  // tuningReq();
 }
-
 void loop() {
+  // Serial.println(AudioEngine.getActiveNotesNumber());
   int msg_len_i = 0;
   bool payload = false;
   String msg = "";
@@ -38,7 +34,7 @@ void loop() {
 #ifdef SERIAL_DEBUG
       Serial.printf("Playing note %d\n", note);
 #endif
-      AudioEngine.start(note);
+      AudioEngine.start(note, 0);
 
     } else if (msg.startsWith("N-Off")) {
       int note = msg.substring(6).toInt();
@@ -47,7 +43,7 @@ void loop() {
       Serial.printf("Stopping note %d\n", note);
 #endif
 
-      AudioEngine.release(note);
+      AudioEngine.release(note, 0);
 
     } else if (msg.startsWith("CC")) {
       Serial.println(msg);
