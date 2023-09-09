@@ -59,7 +59,7 @@ void loop() {
   //printAnalogBuffer();
   // fetchAnalog();
   // checkAnalog();
-  extractKeyboardStatus();
+  // extractKeyboardStatus();
   // printRAWAalog();
 
   // delayMicroseconds(2000);

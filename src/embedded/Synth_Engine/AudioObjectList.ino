@@ -8,12 +8,13 @@ public:
   bool isKeyPressed;
   bool toBeDeleted;
 
-  AudioObject(int id) {
+  AudioObject(int id, unsigned long ticks) {
     this->frequency = NoteFrequency[id % 12] / pow(2, (8 - (id / 12)));
     this->id = id;
     this->isKeyPressed = true;
-    this->ticksFromLastEvent = 0;
+    this->ticksFromLastEvent = ticks;
     this->toBeDeleted = false;
+    Serial.printf("Creating note with %d ticks\n", ticksFromLastEvent);
   }
 };
 
@@ -22,18 +23,24 @@ AudioObjectListMenager::AudioObjectListMenager() {
   _currentlyPlayingNote = 0;
 }
 
+
+
 bool AudioObjectListMenager::start(int id) {
 
   if (id <= 0) return 0;
   int locat = find(id);
   if (locat != -1) {  //this note is already present
-    AudioObjectList[locat] = new AudioObject(id);
+    byte ampl = env.getAmplitude(AudioObjectList[locat]->ticksFromLastEvent, 0, AudioObjectList[locat]->releaseStartingPoint, &AudioObjectList[locat]->toBeDeleted);
+    int noteIndexStart = env.getAttackIndex(ampl);
+    Serial.printf("Ampl:%d\tStart:%d\n", ampl, noteIndexStart);
+    AudioObjectList[locat] = new AudioObject(id, noteIndexStart * Sample_Rate / 1000);
+
   } else {
 
     if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id);
+    AudioObjectList[_currentlyPlayingNote] = new AudioObject(id, 0L);
 
     _currentlyPlayingNote++;
   }
@@ -80,10 +87,9 @@ int AudioObjectListMenager::find(int id) {
   return -1;
 }
 
-
 int AudioObjectListMenager::getActiveNotesNumber() {
   return _currentlyPlayingNote;
 }
 void AudioObjectListMenager::stopAll() {
-  _currentlyPlayingNote=0;
+  _currentlyPlayingNote = 0;
 }

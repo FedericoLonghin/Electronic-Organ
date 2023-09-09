@@ -15,19 +15,8 @@ int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned i
 
 void Envelope::reloadTable() {
   //Attack
-  if (Env_ALinear) {
-    for (int i = 0; i < Env_At; i++) {
-      attackDecayTable[i] = (i * Env_Al) / Env_At;
-    }
-  } else {
-    int i;
-    float val = 1.0;
-    for (i = 0; val <= Env_Al; i++) {
-      val *= Env_ACoeff;
-      attackDecayTable[i] = (int)val;
-    }
-    Env_At = i - 1;
-    Env_Al = attackDecayTable[i - 1];
+  for (int i = 0; i < Env_At; i++) {
+    attackDecayTable[i] = (i * Env_Al) / Env_At;
   }
 
   // Decay
@@ -41,12 +30,19 @@ void Envelope::reloadTable() {
     completeReleaseTable[i] = (255 - (i / (float)Env_R_completeTableLength) * 255);
   }
 
+  //Reverse Attack
+  for (int i = 0; i < 256; i++) {
+    ReverseAttackTable[i] = i * Env_At / Env_Al;
+  }
   //Reverse Complete Release
-  for (int i = 0; i < 255; i++) {
+  for (int i = 0; i < 256; i++) {
     ReverseCompleteReleaseTable[i] = (255 - i) * Env_R_completeTableLength / 255;
   }
 }
 
 int Envelope::getReleaseIndex(int val) {
   return ReverseCompleteReleaseTable[val];
+}
+int Envelope::getAttackIndex(int val) {
+  return ReverseAttackTable[val];
 }

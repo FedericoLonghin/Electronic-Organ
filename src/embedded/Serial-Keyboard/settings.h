@@ -37,8 +37,8 @@
 
 bool encoder_out_a_prev;
 bool encoder_out_b_prev;
-bool encoder_inc,encoder_dec;
-bool showChords=false;
+bool encoder_inc, encoder_dec;
+bool showChords = false;
 //Display animation
 bool displayForceUpdate = true;
 
@@ -50,10 +50,11 @@ bool displayShowOnShow = false;
 int displayChordDuration = 0;
 bool displayChordOnShow = false;
 #define DISPLAY_CHORD_DURATION 200
+#define DEBOUNCE_IN_TIME 50
 
 int shiftTone = 0;
-
 bool keyStatus[BINARY_IN_LENGHT];
+unsigned long lastKeyIteration_ms[BINARY_IN_LENGHT];
 bool upperKeyboardStatus[UPPER_KEYBOARD_LENGTH];
 bool lowerKeyboardStatus[UPPER_KEYBOARD_LENGTH];
 String noteName[] = { "DO", "DO#", "RE", "RE#", "MI", "FA", "FA#", "SOL", "SOL#", "LA", "LA#", "SI" };

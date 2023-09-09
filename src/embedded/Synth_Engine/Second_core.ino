@@ -48,7 +48,7 @@ void generateAudioChunk(int len, bool _section) {
 
 
 
-    totalWaveVal /= 2400;
+    totalWaveVal /= 850;
     wave[MAGIC_BUFFER_OFFSET * _section + a] = totalWaveVal < 255 ? totalWaveVal : 255;
 
     FillBufferIndex++;

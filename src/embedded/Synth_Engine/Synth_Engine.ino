@@ -13,8 +13,8 @@ void setup() {
   Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
   env.reloadTable();
   Wavetable_reloadTable();
-  for (int i = 0; i < Wavetable_Length; i++) {
-    Serial.println(Wavetable_table[Wavetable_waveForm][i]);
+  for (int i = 0; i < 255; i++) {
+    Serial.printf("i:%d\ttab:%d\trevTab:%d\n",i,env.attackDecayTable[i],env.ReverseAttackTable[env.attackDecayTable[i]]);
   }
   // tuningReq();
 }
@@ -56,7 +56,20 @@ void loop() {
 #ifdef SERIAL_DEBUG
       Serial.printf("Control Change Message: %d %d\n", control, value);
 #endif
-      if (control == 24) tuningReq();
+      if (control == 30) {
+        tuningReq();
+      } else if (control == 32) {  //Percuss
+        if (value == 0) env.Env_At = 200;
+        else env.Env_At = 10;
+        env.reloadTable();
+      } else if (control == 31) {  //Sustain
+        if (value == 0) env.Env_Rt = 200;
+        else env.Env_Rt = 600;
+        env.reloadTable();
+      } else if (control >= 20 && control <= 24) {  //wavetype
+        Wavetable_waveForm = control - 20;
+        Wavetable_reloadTable();
+      }
     }
     payload = false;
   }
