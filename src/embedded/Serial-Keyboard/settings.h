@@ -14,9 +14,9 @@
 #define midi true
 #define t 1
 #define tAnalog 200
-#define STARTING_KEY_VAL_LOW 29  //29: middle:C2,  53:middle:C4
-#define STARTING_KEY_VAL_UPP 41  //29: middle:C2,  53:middle:C4
-#define STARTING_KEY_VAL_PED -8
+#define STARTING_KEY_VAL_LOW 0  
+#define STARTING_KEY_VAL_UPP 0  
+#define STARTING_KEY_VAL_PED -32
 
 #define ANALOG_FILTER_RANGE 5
 #define ANALOG_FILTER_IGNORE_RANGE 10

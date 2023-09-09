@@ -31,6 +31,8 @@ void programChange(byte channel, byte program) {  //deprecated
 
 void controlChange(byte channel, byte control, byte value) {  //deprecated
   String str = "CC ";
+  str += getFormattedNumber(channel, 3);
+  str += " ";
   str += getFormattedNumber(control, 3);
   str += " ";
   str += getFormattedNumber(value, 3);

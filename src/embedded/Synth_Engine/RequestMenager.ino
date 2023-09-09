@@ -17,27 +17,41 @@ void requestAction(String msg) {
     audioEngine.release(note, channel);
 
   } else if (msg.startsWith("CC")) {
-    Serial.println(msg);
-    byte control = msg.substring(3, 6).toInt();
-    byte value = msg.substring(7, 10).toInt();
-    if (SERIAL_DEBUG)
-      Serial.printf("Control Change Message: %d %d\n", control, value);
+    byte channel = msg.substring(3, 6).toInt();
+    byte control = msg.substring(7, 10).toInt();
+    byte value = msg.substring(11, 14).toInt();
+    if (SERIAL_DEBUG) Serial.printf("Control Change Message: %d %d %d\n", channel, control, value);
+    switch (channel) {
+      case 0:
+        if (control == 20 && value) audioEngine.soundList[0].Wavetype = WAVETYPE_TRIANG;
+        else if (control == 21 && value) audioEngine.soundList[0].Wavetype = WAVETYPE_SIN;
+        else if (control == 22) {
+          audioEngine.soundList[0].ADSR.Env_Rt = value ? 600 : 200;
+          audioEngine.soundList[0].ADSR.reloadTable();
+        }
+        break;
+      case 1:
+        if (control == 20 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SIN;
+        else if (control == 21 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_TRIANG;
+        else if (control == 22 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SIN_3;
+        else if (control == 23 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SAW;
 
-    if (control == 30) {
-      tuningReq();
+        break;
+      case 2:
+        if (control == 20 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN;
+        else if (control == 21 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_TRIANG;
+        else if (control == 22 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SAW;
+        else if (control == 23 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN_3;
+        else if (control == 24 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SQUARE;
+        else if (control == 31) {
+          audioEngine.soundList[2].ADSR.Env_Rt = value ? 600 : 200;
+          audioEngine.soundList[2].ADSR.reloadTable();
+        } else if (control == 32) {
+          audioEngine.soundList[2].ADSR.Env_At = value ? 20 : 100;
+          audioEngine.soundList[2].ADSR.reloadTable();
+        }
+        break;
     }
-    //   else if (control == 32) {  //Percuss
-    //   if (value == 0) env.Env_At = 200;
-    //   else env.Env_At = 10;
-    //   env.reloadTable();
-    // } else if (control == 31) {  //Sustain
-    //   if (value == 0) env.Env_Rt = 200;
-    //   else env.Env_Rt = 600;
-    //   env.reloadTable();
-    // } else if (control >= 20 && control <= 24) {  //wavetype
-    //   Wavetable_waveForm = control - 20;
-    //   Wavetable_reloadTable();
-    // }
   }
 }
 

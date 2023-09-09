@@ -14,7 +14,7 @@ typedef int AO_Id;
 class AudioObject {
 public:
   int frequency;
-  int note;
+  int realNote;
   // int channel;
   unsigned long ticksFromLastEvent;
   unsigned int releaseStartingPoint;
@@ -24,7 +24,7 @@ public:
 
   AudioObject(int note, unsigned long ticks, int _sound) {
     this->frequency = NoteFrequency[note % 12] / pow(2, (8 - (note / 12)));
-    this->note = note;
+    this->realNote = note;
     this->isKeyPressed = true;
     this->ticksFromLastEvent = ticks;
     this->toBeDeleted = false;
@@ -39,20 +39,20 @@ AudioEngine::AudioEngine() {
 }
 
 bool AudioEngine::start(int note, int channel) {
-  if (note <= 0) return 0;
+  if (note < 0) return 0;
   int locat = find_inActiveNoteList(getNoteId(note, channel));
   if (locat != -1) {  //this note is already present
     Serial.println("New note is already present");
     Envelope *env = &audioEngine.soundList[channel].ADSR;
     byte ampl = env->getAmplitude(AudioObjectList[getNoteId(note, channel)]->ticksFromLastEvent, 0, AudioObjectList[getNoteId(note, channel)]->releaseStartingPoint, &AudioObjectList[getNoteId(note, channel)]->toBeDeleted);
     int envelopeIndexStart = env->getAttackIndex(ampl);
-    AudioObjectList[getNoteId(note, channel)] = new AudioObject(note, envelopeIndexStart * (Sample_Rate / 1000), channel);
+    AudioObjectList[getNoteId(note, channel)] = new AudioObject(note + ObjectChannelShift[channel], envelopeIndexStart * (Sample_Rate / 1000), channel);
     Serial.printf("Ampl:%d\tStart:%d\n", ampl, envelopeIndexStart);
   } else {
     if (_currentlyPlayingNote >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
     }
-    AudioObjectList[getNoteId(note, channel)] = new AudioObject(note, 0L, channel);
+    AudioObjectList[getNoteId(note, channel)] = new AudioObject(note + ObjectChannelShift[channel], 0L, channel);
     activeNoteList[_currentlyPlayingNote] = getNoteId(note, channel);
     _currentlyPlayingNote++;
   }

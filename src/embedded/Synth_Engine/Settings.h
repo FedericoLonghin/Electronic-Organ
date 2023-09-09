@@ -60,7 +60,7 @@ public:
 #define MAX_AUDIO_OBJECT_PER_CHANNEL 44
 #define MAX_AUDIO_OBJECT_CHANNEL 3
 #define MAX_AUDIO_ACTIVE_OBJECT_NUMBER 44
-#define MAX_SOUNDS_NUMBER 4
+#define MAX_SOUNDS_NUMBER MAX_AUDIO_OBJECT_CHANNEL
 class AudioObject;
 
 class AudioEngine {
@@ -80,6 +80,7 @@ public:
   int getActiveNotesNumber();
   void stopAll();
   int activeNoteList[MAX_AUDIO_ACTIVE_OBJECT_NUMBER] = { 0 };  //contains all active AudioObject's ids
+  int ObjectChannelShift[MAX_AUDIO_OBJECT_CHANNEL]={24,29,41};
 };
 
 AudioEngine audioEngine;

@@ -14,10 +14,7 @@ void setup() {
   audioEngine.soundList[1].setDefaultParam();
   audioEngine.soundList[2].setDefaultParam();
   audioEngine.soundList[2].Wavetype=2;
-  audioEngine.soundList[3].setDefaultParam();
-  // for(int i=0;i<audioEngine.soundList[0].ADSR.Env_At;i++){
-  //   Serial.println(audioEngine.soundList[0].ADSR.attackDecayTable[i]);
-  // }
+  audioEngine.soundList[1].Wavetype=WAVETYPE_SIN_3;
 }
 void loop() {
   int msg_len_i = 0;
