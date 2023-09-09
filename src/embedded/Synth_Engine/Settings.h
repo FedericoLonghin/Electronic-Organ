@@ -1,3 +1,4 @@
+#include "driver/adc.h"
 #define Wavetable_Length 200
 #define Sample_Rate 40000
 #define MAGIC_BUFFER_OFFSET 100
@@ -21,14 +22,12 @@ bool newSampleREQ_SectionToFill = false;
 #define Envelope_Release_Table_Length 5000
 class Envelope {
 public:
-  int Env_At = 100;
-  int Env_Al = 255;
-  int Env_Dt = 200;
-  int Env_Sl = 200;
-  int Env_Rt = 400;
+  int Env_At;
+  int Env_Al;
+  int Env_Dt;
+  int Env_Sl;
+  int Env_Rt;
   int Env_R_completeTableLength = 0;
-  float Env_ACoeff = 1.1f;
-
   // private:
   byte attackDecayTable[Envelope_AttackDecay_Table_Length];
   byte completeReleaseTable[Envelope_Release_Table_Length];
@@ -42,19 +41,37 @@ public:
   int getAttackIndex(int val);
 };
 
+class Sound {
+public:
+  Envelope ADSR;
+  byte Wavetype;
+  void setDefaultParam() {
+
+    ADSR.Env_At = 100;
+    ADSR.Env_Al = 255;
+    ADSR.Env_Dt = 100;
+    ADSR.Env_Sl = 200;
+    ADSR.Env_Rt = 200;
+    ADSR.reloadTable();
+    Wavetype = 0;
+  }
+};
+
 #define MAX_AUDIO_OBJECT_PER_CHANNEL 44
 #define MAX_AUDIO_OBJECT_CHANNEL 3
 #define MAX_AUDIO_ACTIVE_OBJECT_NUMBER 44
+#define MAX_SOUNDS_NUMBER 4
 class AudioObject;
 
-class AudioObjectListMenager {
+class AudioEngine {
 private:
   static const int _MAX_AUDIO_OBJECT_NUMBER = MAX_AUDIO_ACTIVE_OBJECT_NUMBER;
   int _currentlyPlayingNote = 0;
 
 public:
   AudioObject *AudioObjectList[MAX_AUDIO_OBJECT_PER_CHANNEL * MAX_AUDIO_OBJECT_CHANNEL];
-  AudioObjectListMenager();
+  Sound soundList[MAX_SOUNDS_NUMBER];
+  AudioEngine();
   bool start(int note, int channel);
   bool release(int note, int channel);
   bool stop(int id);
@@ -62,22 +79,10 @@ public:
   void cleanSilentObjects();
   int getActiveNotesNumber();
   void stopAll();
-  int fastNoteArray[44] = { 0 };
   int activeNoteList[MAX_AUDIO_ACTIVE_OBJECT_NUMBER] = { 0 };  //contains all active AudioObject's ids
 };
 
-AudioObjectListMenager AudioEngine;
-
-class Sound {
-public:
-  Envelope Env;
-  int Volume;
-  int WaveType;
-};
-
-
-Envelope env;
-
+AudioEngine audioEngine;
 
 byte Wavetable_waveForm = WAVETYPE_SIN_3;
 #define Wavetable_MaxAmplitude_val 255

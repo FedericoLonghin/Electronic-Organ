@@ -28,14 +28,14 @@ byte ampl;
 unsigned int totalWaveVal;
 float divider = Wavetable_Length / (float)(Sample_Rate);
 void generateAudioChunk(int len, bool _section) {
-  int noteNum = AudioEngine.getActiveNotesNumber();
+  int noteNum = audioEngine.getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
 
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
-      int ObjAddr = AudioEngine.activeNoteList[f];
-      sampleVal = Wavetable_table[Wavetable_waveForm][(byte)((((AudioEngine.AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
-      ampl = env.getAmplitude(AudioEngine.AudioObjectList[ObjAddr]->ticksFromLastEvent++, AudioEngine.AudioObjectList[ObjAddr]->isKeyPressed, AudioEngine.AudioObjectList[ObjAddr]->releaseStartingPoint, &AudioEngine.AudioObjectList[ObjAddr]->toBeDeleted);
+      int ObjAddr = audioEngine.activeNoteList[f];
+      sampleVal = Wavetable_table[audioEngine.soundList[audioEngine.AudioObjectList[ObjAddr]->sound].Wavetype][(byte)((((audioEngine.AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
+      ampl = audioEngine.soundList[audioEngine.AudioObjectList[ObjAddr]->sound].ADSR.getAmplitude(audioEngine.AudioObjectList[ObjAddr]->ticksFromLastEvent++, audioEngine.AudioObjectList[ObjAddr]->isKeyPressed, audioEngine.AudioObjectList[ObjAddr]->releaseStartingPoint, &audioEngine.AudioObjectList[ObjAddr]->toBeDeleted);
       totalWaveVal += (sampleVal * ampl);
     }
     totalWaveVal /= 850;
