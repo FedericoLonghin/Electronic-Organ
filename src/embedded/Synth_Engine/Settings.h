@@ -63,7 +63,7 @@ public:
 #define MAX_SOUNDS_NUMBER MAX_AUDIO_OBJECT_CHANNEL
 class AudioObject;
 
-class AudioEngine {
+class SynthEngine {
 private:
   static const int _MAX_AUDIO_OBJECT_NUMBER = MAX_AUDIO_ACTIVE_OBJECT_NUMBER;
   int _currentlyPlayingNote = 0;
@@ -71,7 +71,7 @@ private:
 public:
   AudioObject *AudioObjectList[MAX_AUDIO_OBJECT_PER_CHANNEL * MAX_AUDIO_OBJECT_CHANNEL];
   Sound soundList[MAX_SOUNDS_NUMBER];
-  AudioEngine();
+  SynthEngine();
   bool start(int note, int channel);
   bool release(int note, int channel);
   bool stop(int id);
@@ -80,10 +80,10 @@ public:
   int getActiveNotesNumber();
   void stopAll();
   int activeNoteList[MAX_AUDIO_ACTIVE_OBJECT_NUMBER] = { 0 };  //contains all active AudioObject's ids
-  int ObjectChannelShift[MAX_AUDIO_OBJECT_CHANNEL]={24,29,41};
+  int ObjectChannelShift[MAX_AUDIO_OBJECT_CHANNEL] = { 24, 29, 41 };
 };
 
-AudioEngine audioEngine;
+SynthEngine audioEngine;
 
 byte Wavetable_waveForm = WAVETYPE_SIN_3;
 #define Wavetable_MaxAmplitude_val 255

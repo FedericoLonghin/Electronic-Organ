@@ -33,12 +33,12 @@ public:
   }
 };
 
-AudioEngine::AudioEngine() {
+SynthEngine::SynthEngine() {
 
   _currentlyPlayingNote = 0;
 }
 
-bool AudioEngine::start(int note, int channel) {
+bool SynthEngine::start(int note, int channel) {
   if (note < 0) return 0;
   int locat = find_inActiveNoteList(getNoteId(note, channel));
   if (locat != -1) {  //this note is already present
@@ -60,7 +60,7 @@ bool AudioEngine::start(int note, int channel) {
 }
 
 
-bool AudioEngine::release(int note, int channel) {
+bool SynthEngine::release(int note, int channel) {
   int id = getNoteId(note, channel);
   Envelope *env = &audioEngine.soundList[channel].ADSR;
 
@@ -72,7 +72,7 @@ bool AudioEngine::release(int note, int channel) {
 }
 
 //remove stopped Object's id from activeNoteList
-bool AudioEngine::stop(int id) {
+bool SynthEngine::stop(int id) {
   Serial.printf("Deleting note:%d\n", id);
   int locat = find_inActiveNoteList(id);
   if (locat == -1) return false;
@@ -83,7 +83,7 @@ bool AudioEngine::stop(int id) {
   return true;
 }
 
-void AudioEngine::cleanSilentObjects() {
+void SynthEngine::cleanSilentObjects() {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
     if (AudioObjectList[activeNoteList[i]]->toBeDeleted) {
       stop(activeNoteList[i]);
@@ -92,17 +92,17 @@ void AudioEngine::cleanSilentObjects() {
 }
 
 // return Position in activeNoteList[]
-int AudioEngine::find_inActiveNoteList(int id) {
+int SynthEngine::find_inActiveNoteList(int id) {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
     if (activeNoteList[i] == id) return i;
   }
   return -1;
 }
 
-int AudioEngine::getActiveNotesNumber() {
+int SynthEngine::getActiveNotesNumber() {
   return _currentlyPlayingNote;
 }
-void AudioEngine::stopAll() {
+void SynthEngine::stopAll() {
   _currentlyPlayingNote = 0;
 }
 
