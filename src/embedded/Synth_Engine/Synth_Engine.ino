@@ -1,29 +1,22 @@
-#include "Settings.h"
 #include "SynthEngine.h"
 
 #define SERIAL_DEBUG 1
 
 SynthEngine audioEngine;
 TaskHandle_t Core0;
+
 void setupTimerInterrupt();
 void setup() {
-  xTaskCreatePinnedToCore(
-    Compositor_SR,
-    "Core0",
-    10000,
-    NULL,
-    0,
-    &Core0,
-    0);
-
+  xTaskCreatePinnedToCore(Compositor_SR, "Core0", 10000, NULL, 0, &Core0, 0);
   setCpuFrequencyMhz(2400);
   if (SERIAL_DEBUG) Serial.begin(921600);
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
   // setupTimerInterrupt();
   // setupCore0();
   setupTimerInterrupt();
-  Serial.printf("CPU Freq: %d\n", getCpuFrequencyMhz());
-  audioEngine.Wavetable_reloadTable();
+  Serial.printf("Electronic Organ started!\nCPU Freq: %d\n", getCpuFrequencyMhz());
+
+  audioEngine.reloadWavetable();
   audioEngine.soundList[0].setDefaultParam();
   audioEngine.soundList[1].setDefaultParam();
   audioEngine.soundList[2].setDefaultParam();

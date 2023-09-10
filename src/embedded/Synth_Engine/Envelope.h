@@ -1,10 +1,9 @@
 #ifndef Envelope_h
 #define Envelope_h
 #include "Arduino.h"
+#include "Definitions.h"
 
-#define Sample_Rate 40000
-#define Envelope_AttackDecay_Table_Length 10000
-#define Envelope_Release_Table_Length 5000
+
 class Envelope {
 public:
   int Env_At;

@@ -55,8 +55,6 @@ void requestAction(String msg) {
   }
 }
 
-
-
 void tuningReq() {
   audioEngine.stopAll();
   Serial.println("TuneREQ.");

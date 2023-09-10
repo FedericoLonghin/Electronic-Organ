@@ -7,12 +7,38 @@
  * see https://github.com/FedericoLonghin/Electronic-Organ
  */
 
-SynthEngine::SynthEngine() {
+/*
+ * Auxiliary variables list:
+ */
 
+// AudioCompositorHandler()
+int c = 0;
+
+// generateAudioChunk()
+byte sampleVal;
+byte ampl;
+unsigned int totalWaveVal;
+float divider = Wavetable_Length / (float)(Sample_Rate);
+
+// IntSr()
+byte wave[MAGIC_BUFFER_OFFSET * 2];
+bool newSampleREQ;
+bool newSampleREQ_SectionToFill;
+unsigned int OutBufferIndex = 0;
+
+// setupTimerInterrupt
+hw_timer_t *Timer0_Cfg = NULL;
+
+/*
+ * Methods and functions:
+ */
+
+SynthEngine::SynthEngine() {
   _currentlyPlayingNote = 0;
   newSampleREQ = false;
   newSampleREQ_SectionToFill = false;
 }
+
 
 bool SynthEngine::start(int note, int channel) {
   if (note < 0) return 0;
@@ -35,7 +61,6 @@ bool SynthEngine::start(int note, int channel) {
   return true;
 }
 
-
 bool SynthEngine::release(int note, int channel) {
   int id = getNoteId(note, channel);
   Envelope *env = &soundList[channel].ADSR;
@@ -47,7 +72,6 @@ bool SynthEngine::release(int note, int channel) {
   return true;
 }
 
-//remove stopped Object's id from activeNoteList
 bool SynthEngine::stop(int id) {
   Serial.printf("Deleting note:%d\n", id);
   int locat = find_inActiveNoteList(id);
@@ -67,7 +91,6 @@ void SynthEngine::cleanSilentObjects() {
   }
 }
 
-// return Position in activeNoteList[]
 int SynthEngine::find_inActiveNoteList(int id) {
   for (int i = 0; i < _currentlyPlayingNote; i++) {
     if (activeNoteList[i] == id) return i;
@@ -78,6 +101,7 @@ int SynthEngine::find_inActiveNoteList(int id) {
 int SynthEngine::getActiveNotesNumber() {
   return _currentlyPlayingNote;
 }
+
 void SynthEngine::stopAll() {
   _currentlyPlayingNote = 0;
 }
@@ -86,8 +110,7 @@ int SynthEngine::getNoteId(int note, int channel) {
   return channel * MAX_AUDIO_OBJECT_PER_CHANNEL + note;
 }
 
-//Wavetable
-void SynthEngine::Wavetable_reloadTable() {
+void SynthEngine::reloadWavetabl#definee() {
 
   for (int i = 0; i < Wavetable_Length; i++) {
     Wavetable_table[WAVETYPE_SIN][i] = sin((i / (float)Wavetable_Length) * 2 * PI) * Wavetable_MaxAmplitude_val / 4.0f + Wavetable_MaxAmplitude_val / 2;
@@ -115,14 +138,6 @@ void SynthEngine::Wavetable_reloadTable() {
   }
 }
 
-
-
-//Second Core
-
-
-
-int c = 0;
-//Core 0 Service Routine
 void SynthEngine::AudioCompositorHandler() {
   for (;;) {
     if (newSampleREQ) {
@@ -133,10 +148,6 @@ void SynthEngine::AudioCompositorHandler() {
   }
 }
 
-byte sampleVal;
-byte ampl;
-unsigned int totalWaveVal;
-float divider = Wavetable_Length / (float)(Sample_Rate);
 void SynthEngine::generateAudioChunk(int len, bool _section) {
   int noteNum = getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
@@ -158,8 +169,6 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
   }
 }
 
-
-
 void IRAM_ATTR IntSR() {
   if (OutBufferIndex >= MAGIC_BUFFER_OFFSET * 2) {
     OutBufferIndex = 0;
@@ -175,8 +184,6 @@ void IRAM_ATTR IntSR() {
   OutBufferIndex++;
 }
 
-hw_timer_t *Timer0_Cfg = NULL;
-
 void setupTimerInterrupt() {
   Timer0_Cfg = timerBegin(0, 2, true);
   timerAttachInterrupt(Timer0_Cfg, *IntSR, true);
@@ -184,7 +191,3 @@ void setupTimerInterrupt() {
   timerAlarmEnable(Timer0_Cfg);
 }
 
-byte wave[MAGIC_BUFFER_OFFSET * 2];
-bool newSampleREQ;
-bool newSampleREQ_SectionToFill;
-unsigned int OutBufferIndex = 0;
