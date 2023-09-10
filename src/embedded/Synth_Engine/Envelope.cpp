@@ -1,3 +1,6 @@
+#include "Arduino.h"
+#include "Envelope.h"
+
 int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, bool *toBeDeleted) {
   noteLife /= (Sample_Rate / 1000);  //changing referement to millisecond
   if (isKeyPressed) {
@@ -43,6 +46,7 @@ void Envelope::reloadTable() {
 int Envelope::getReleaseIndex(int val) {
   return ReverseCompleteReleaseTable[val];
 }
+
 int Envelope::getAttackIndex(int val) {
   return ReverseAttackTable[val];
 }
