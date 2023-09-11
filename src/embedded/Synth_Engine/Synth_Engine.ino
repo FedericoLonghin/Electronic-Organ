@@ -22,7 +22,7 @@ void setup() {
   audioEngine.soundList[2].setDefaultParam();
   audioEngine.soundList[2].Wavetype = 2;
   audioEngine.soundList[1].Wavetype = WAVETYPE_SIN_3;
-  
+  audioEngine.soundList[1].Trem.enable = 1;
 }
 
 void loop() {

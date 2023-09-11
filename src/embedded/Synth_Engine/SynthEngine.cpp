@@ -18,6 +18,8 @@ int uselessCounter = 0;
 // generateAudioChunk()
 byte sampleVal;
 byte ampl;
+float trem;
+float oldtrem;
 unsigned int totalWaveVal;
 float divider = Wavetable_Length / (float)(Sample_Rate);
 
@@ -176,7 +178,6 @@ void SynthEngine::AudioCompositorHandler() {
     uselessCounter++;  //just for triggering WDT
   }
 }
-float trem;
 void SynthEngine::generateAudioChunk(int len, bool _section) {
   int noteNum = getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
@@ -184,23 +185,20 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
       // FillBufferIndex = 0;
-      // for (int i = 0; i < Sample_Rate; i++) {
+      int ObjAddr = activeNoteList[f];
+      // for (int i = 0; i < 4000; i++) {
 
-      // Serial.printf("i:%d\t\ttrem:%f\n", i, trem);
+      // Serial.printf("i:%d\t\ttrem:%f\n", i, soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(FillBufferIndex));
+      // Serial.printf("i:%d\t\ttrem:%f\n", i, soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(i));
       //   FillBufferIndex++;
       // }
       // while (1) {}
 
       // Serial.println(trem);
-      int ObjAddr = activeNoteList[f];
       sampleVal = Wavetable_table[soundList[AudioObjectList[ObjAddr]->sound].Wavetype][(byte)((((AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
       ampl = soundList[AudioObjectList[ObjAddr]->sound].ADSR.getAmplitude(AudioObjectList[ObjAddr]->ticksFromLastEvent++, AudioObjectList[ObjAddr]->isKeyPressed, AudioObjectList[ObjAddr]->releaseStartingPoint, &AudioObjectList[ObjAddr]->toBeDeleted);
-      if (soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_enable) {
+      trem = soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(f == 0);
 
-        trem = 1 + (Wavetable_table[WAVETYPE_TRIANG][(byte)(((FillBufferIndex * soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_speed) % Sample_Rate) * divider)] - 128) * (soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_depth) / 1024.0;
-      } else {
-        trem = 1;
-      }
       totalWaveVal += (sampleVal * ampl * trem);
     }
     totalWaveVal /= 1000;

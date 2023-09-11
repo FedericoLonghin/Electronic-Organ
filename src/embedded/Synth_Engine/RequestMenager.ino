@@ -53,9 +53,10 @@ void requestAction(String msg) {
         break;
       case 3:
         if (control == 29) {  // Space Motion
-          audioEngine.soundList[1].EFX_tremolo_enable = value;
+          audioEngine.soundList[1].Trem.setDepth(value ? 2 : 8);
+          audioEngine.soundList[1].Trem.enable = 1;
         } else if (control == 30) {  //Space Slow Fast
-          audioEngine.soundList[1].EFX_tremolo_speed = value ? 2 : 10;
+          audioEngine.soundList[1].Trem.setSpeed(value ? 3 : 10);
         }
         break;
     }
