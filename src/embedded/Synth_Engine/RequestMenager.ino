@@ -51,6 +51,13 @@ void requestAction(String msg) {
           audioEngine.soundList[2].ADSR.reloadTable();
         }
         break;
+      case 3:
+        if (control == 29) {  // Space Motion
+          audioEngine.soundList[1].EFX_tremolo_enable = value;
+        } else if (control == 30) {  //Space Slow Fast
+          audioEngine.soundList[1].EFX_tremolo_speed = value ? 2 : 10;
+        }
+        break;
     }
   }
 }

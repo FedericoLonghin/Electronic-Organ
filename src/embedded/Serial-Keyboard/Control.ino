@@ -216,11 +216,11 @@ void toggleAction(int index, bool val) {
       controlChange(3, 30, val * 64);
       break;
     case DIGITAL_SYNTH_SEMI_DOWN:
-      shiftTone--;
+      // shiftTone--;
       displayForceUpdate = true;
       break;
     case DIGITAL_SYNTH_SEMI_UP:
-      shiftTone++;
+      // shiftTone++;
       displayForceUpdate = true;
       break;
     case DIGITAL_SYNTH_CANCEL:

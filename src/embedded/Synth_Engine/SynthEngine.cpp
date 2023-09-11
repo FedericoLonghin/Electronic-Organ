@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "SynthEngine.h"
+#include "esp_task_wdt.h"
 
 
 /*
@@ -12,7 +13,7 @@
  */
 
 // AudioCompositorHandler()
-int c = 0;
+int uselessCounter = 0;
 
 // generateAudioChunk()
 byte sampleVal;
@@ -82,11 +83,30 @@ bool SynthEngine::stop(int id) {
   _currentlyPlayingNote--;
   return true;
 }
+bool SynthEngine::stop_byActiveNoteListPos(int locat) {
+  if (locat == -1) return false;
+  if (_currentlyPlayingNote > 1 && locat != _currentlyPlayingNote - 1) {
+    activeNoteList_Change_REQ = true;
+    while (!activeNoteList_Change_ACK) {
+      // uselessCounter++;
+      esp_task_wdt_reset();
+
+      // Serial.println("B");
+    }
+    Serial.printf("switching pos: %d <-> %d\n", locat, _currentlyPlayingNote - 1);
+    activeNoteList[locat] = activeNoteList[_currentlyPlayingNote - 1];
+    activeNoteList_Change_REQ = false;
+  }
+  _currentlyPlayingNote--;
+  return true;
+}
 
 void SynthEngine::cleanSilentObjects() {
-  for (int i = 0; i < _currentlyPlayingNote; i++) {
+  int len = _currentlyPlayingNote;
+  for (int i = 0; i < len; i++) {
     if (AudioObjectList[activeNoteList[i]]->toBeDeleted) {
-      stop(activeNoteList[i]);
+
+      stop_byActiveNoteListPos(i);
     }
   }
 }
@@ -110,7 +130,7 @@ int SynthEngine::getNoteId(int note, int channel) {
   return channel * MAX_AUDIO_OBJECT_PER_CHANNEL + note;
 }
 
-void SynthEngine::reloadWavetabl#definee() {
+void SynthEngine::reloadWavetable() {
 
   for (int i = 0; i < Wavetable_Length; i++) {
     Wavetable_table[WAVETYPE_SIN][i] = sin((i / (float)Wavetable_Length) * 2 * PI) * Wavetable_MaxAmplitude_val / 4.0f + Wavetable_MaxAmplitude_val / 2;
@@ -144,22 +164,46 @@ void SynthEngine::AudioCompositorHandler() {
       newSampleREQ = false;
       generateAudioChunk(MAGIC_BUFFER_OFFSET, newSampleREQ_SectionToFill);
     }
-    c++;  //just for triggering WDT
+    if (activeNoteList_Change_REQ) {
+      activeNoteList_Change_ACK = true;
+      while (activeNoteList_Change_REQ) {
+        // uselessCounter++;
+        // if (uselessCounter > 100) uselessCounter = 0;
+        esp_task_wdt_reset();
+      }
+      activeNoteList_Change_ACK = false;
+    }
+    uselessCounter++;  //just for triggering WDT
   }
 }
-
+float trem;
 void SynthEngine::generateAudioChunk(int len, bool _section) {
   int noteNum = getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
 
     totalWaveVal = 0;
     for (int f = 0; f < noteNum; f++) {
+      // FillBufferIndex = 0;
+      // for (int i = 0; i < Sample_Rate; i++) {
+
+      // Serial.printf("i:%d\t\ttrem:%f\n", i, trem);
+      //   FillBufferIndex++;
+      // }
+      // while (1) {}
+
+      // Serial.println(trem);
       int ObjAddr = activeNoteList[f];
       sampleVal = Wavetable_table[soundList[AudioObjectList[ObjAddr]->sound].Wavetype][(byte)((((AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
       ampl = soundList[AudioObjectList[ObjAddr]->sound].ADSR.getAmplitude(AudioObjectList[ObjAddr]->ticksFromLastEvent++, AudioObjectList[ObjAddr]->isKeyPressed, AudioObjectList[ObjAddr]->releaseStartingPoint, &AudioObjectList[ObjAddr]->toBeDeleted);
-      totalWaveVal += (sampleVal * ampl);
+      if (soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_enable) {
+
+        trem = 1 + (Wavetable_table[WAVETYPE_TRIANG][(byte)(((FillBufferIndex * soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_speed) % Sample_Rate) * divider)] - 128) * (soundList[AudioObjectList[ObjAddr]->sound].EFX_tremolo_depth) / 1024.0;
+      } else {
+        trem = 1;
+      }
+      totalWaveVal += (sampleVal * ampl * trem);
     }
-    totalWaveVal /= 850;
+    totalWaveVal /= 1000;
     wave[MAGIC_BUFFER_OFFSET * _section + a] = totalWaveVal < 255 ? totalWaveVal : 255;
 
     FillBufferIndex++;
@@ -190,4 +234,3 @@ void setupTimerInterrupt() {
   timerAlarmWrite(Timer0_Cfg, 1000, true);
   timerAlarmEnable(Timer0_Cfg);
 }
-

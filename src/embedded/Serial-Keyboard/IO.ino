@@ -25,8 +25,11 @@ void getButtonPressed() {
     // //OTHER
 
 
-    if (keyStatus[i] != digitalRead(OUT) && millis() - lastKeyIteration_ms[i]>DEBOUNCE_IN_TIME) {
-
+    if (keyStatus[i] != digitalRead(OUT) && millis() - lastKeyIteration_ms[i] > DEBOUNCE_IN_TIME) {
+      // Serial.print("toggling: ");
+      // Serial.print(i);
+      // Serial.print(" stat: ");
+      // Serial.println(keyStatus[i]);
       toggleAction(i, digitalRead(OUT));
       lastKeyIteration_ms[i] = millis();
       keyStatus[i] = digitalRead(OUT);

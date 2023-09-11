@@ -6,11 +6,6 @@
 #include "Sound.h"
 #include "AudioObject.h"
 
-
-
-
-
-
 extern byte wave[MAGIC_BUFFER_OFFSET * 2];
 extern bool newSampleREQ;
 extern bool newSampleREQ_SectionToFill;
@@ -28,6 +23,7 @@ public:
   bool start(int note, int channel);
   bool release(int note, int channel);
   bool stop(int id);
+  bool stop_byActiveNoteListPos(int locat);
   int find_inActiveNoteList(int id);  // return Position in activeNoteList[]
   void cleanSilentObjects();
   int getActiveNotesNumber();
@@ -43,7 +39,8 @@ public:
 
   byte Wavetable_table[MaxWaveTypes][Wavetable_Length];
   unsigned int FillBufferIndex = 0;
-  // void setupTimerInterrupt();
+  bool activeNoteList_Change_REQ=false;
+  bool activeNoteList_Change_ACK=false;
 };
 
 void IRAM_ATTR IntSR();
