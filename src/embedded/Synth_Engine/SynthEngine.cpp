@@ -159,6 +159,7 @@ void SynthEngine::reloadWavetable() {
     Wavetable_table[WAVETYPE_SIN_3][i] = (sin((i / (float)Wavetable_Length) * 2 * PI) + sin((i / (float)Wavetable_Length) * 4 * PI) + sin((i / (float)Wavetable_Length) * 8 * PI)) * Wavetable_MaxAmplitude_val / 12.0f + Wavetable_MaxAmplitude_val / 2;
   }
 }
+void startCounter(int max, bool count_first);
 void endCounter();
 void tick();
 
