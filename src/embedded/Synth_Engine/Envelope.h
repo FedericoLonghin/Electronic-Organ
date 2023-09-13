@@ -2,6 +2,8 @@
 #define Envelope_h
 #include "Arduino.h"
 #include "Definitions.h"
+#include "AudioObject.h"
+
 
 
 class Envelope {
@@ -20,6 +22,7 @@ public:
 
 public:
   int getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, bool *toBeDeleted);
+  int getAmplitudeNew(AudioObject *Obj);
   void reloadTable();
   int getReleaseIndex(int val);
   int getAttackIndex(int val);

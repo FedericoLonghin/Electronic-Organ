@@ -159,8 +159,31 @@ void SynthEngine::reloadWavetable() {
     Wavetable_table[WAVETYPE_SIN_3][i] = (sin((i / (float)Wavetable_Length) * 2 * PI) + sin((i / (float)Wavetable_Length) * 4 * PI) + sin((i / (float)Wavetable_Length) * 8 * PI)) * Wavetable_MaxAmplitude_val / 12.0f + Wavetable_MaxAmplitude_val / 2;
   }
 }
+void endCounter();
+void tick();
 
 void SynthEngine::AudioCompositorHandler() {
+#if 0  //testbench
+  while (1) {
+    while (!getActiveNotesNumber()) {
+      esp_task_wdt_reset();
+    }
+#define counterLen 200000
+    int testVal = 0;
+    soundList[0].Trem.begin(1,1);
+    soundList[0].Trem.enable;
+    startCounter(counterLen, false);
+    for (int i = 0; i < counterLen; i++) {
+      int ObjAddr = activeNoteList[0];
+      trem = soundList[0].Trem.getValNew(true);//...ms
+
+      testVal += trem;
+      // tick();
+    }
+    endCounter();
+    Serial.println(testVal);
+  }
+#endif
   for (;;) {
     if (newSampleREQ) {
       newSampleREQ = false;
@@ -178,6 +201,9 @@ void SynthEngine::AudioCompositorHandler() {
     uselessCounter++;  //just for triggering WDT
   }
 }
+
+
+
 void SynthEngine::generateAudioChunk(int len, bool _section) {
   int noteNum = getActiveNotesNumber();
   for (int a = 0; a < len; a++) {
@@ -186,6 +212,7 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
     for (int f = 0; f < noteNum; f++) {
       // FillBufferIndex = 0;
       int ObjAddr = activeNoteList[f];
+      int _soundNum = AudioObjectList[ObjAddr]->sound;
       // for (int i = 0; i < 4000; i++) {
 
       // Serial.printf("i:%d\t\ttrem:%f\n", i, soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(FillBufferIndex));
@@ -195,9 +222,9 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
       // while (1) {}
 
       // Serial.println(trem);
-      sampleVal = Wavetable_table[soundList[AudioObjectList[ObjAddr]->sound].Wavetype][(byte)((((AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
-      ampl = soundList[AudioObjectList[ObjAddr]->sound].ADSR.getAmplitude(AudioObjectList[ObjAddr]->ticksFromLastEvent++, AudioObjectList[ObjAddr]->isKeyPressed, AudioObjectList[ObjAddr]->releaseStartingPoint, &AudioObjectList[ObjAddr]->toBeDeleted);
-      trem = soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(f == 0);
+      sampleVal = Wavetable_table[soundList[_soundNum].Wavetype][(byte)((((AudioObjectList[ObjAddr]->frequency) * FillBufferIndex) % (Sample_Rate)) * divider)];
+      ampl = soundList[_soundNum].ADSR.getAmplitudeNew(AudioObjectList[ObjAddr]);
+      trem = soundList[_soundNum].Trem.getVal(f == 0);
 
       totalWaveVal += (sampleVal * ampl * trem);
     }

@@ -53,10 +53,11 @@ void requestAction(String msg) {
         break;
       case 3:
         if (control == 29) {  // Space Motion
-          audioEngine.soundList[1].Trem.setDepth(value ? 2 : 8);
-          audioEngine.soundList[1].Trem.enable = 1;
+          if (!value) audioEngine.soundList[1].Trem.enable = true;
+          audioEngine.soundList[1].Trem.setDepth(value ? 0 : 4);
+          // audioEngine.soundList[1].Trem.enable = 1;
         } else if (control == 30) {  //Space Slow Fast
-          audioEngine.soundList[1].Trem.setSpeed(value ? 3 : 10);
+          audioEngine.soundList[1].Trem.setSpeed(value ? 3 : 20);
         }
         break;
     }

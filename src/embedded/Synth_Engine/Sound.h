@@ -7,7 +7,7 @@
 
 class LFO {
 private:
-  int freq_pv;
+   int freq_pv;
   bool freq_ramp_enable_next_step = false;
   unsigned int autoIncrementIndex = 0;
 public:
@@ -17,6 +17,7 @@ public:
   void begin(int _freq);
   void generateTable();
   float getValAutoIncrement(bool _increment);
+  float getValAutoIncrementNew(bool _increment);
   void setSpeed(int _speed);
 };
 
@@ -33,6 +34,7 @@ public:
   void setSpeed(int _speed);
   void setDepth(float _depth);
   float getVal(bool _increment);
+  float getValNew(bool _increment);
 };
 
 class Sound {

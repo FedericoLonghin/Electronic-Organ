@@ -7,7 +7,7 @@
 #define MAX_AUDIO_OBJECT_CHANNEL 3
 #define MAX_AUDIO_ACTIVE_OBJECT_NUMBER 44
 #define MAX_SOUNDS_NUMBER MAX_AUDIO_OBJECT_CHANNEL
-#define MAGIC_BUFFER_OFFSET 100 //Output buffer size
+#define MAGIC_BUFFER_OFFSET 100  //Output buffer size
 
 // Wavetable
 #define Wavetable_Length 200

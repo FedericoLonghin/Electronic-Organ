@@ -2,9 +2,9 @@
 #define SynthEngine_h
 #include "Arduino.h"
 #include "Definitions.h"
+#include "AudioObject.h"
 #include "Envelope.h"
 #include "Sound.h"
-#include "AudioObject.h"
 
 extern byte wave[MAGIC_BUFFER_OFFSET * 2];
 extern bool newSampleREQ;

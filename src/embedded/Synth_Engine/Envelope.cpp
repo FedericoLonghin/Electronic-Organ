@@ -15,6 +15,21 @@ int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned i
   *toBeDeleted = true;
   return 0;
 }
+int Envelope::getAmplitudeNew(AudioObject *Obj) {
+
+  unsigned long noteLife = Obj->ticksFromLastEvent++ / (Sample_Rate / 1000);  //changing referement to millisecond
+  if (Obj->isKeyPressed) {
+    if (noteLife < Env_At + Env_Dt) {
+      return attackDecayTable[noteLife];
+    }
+    return Env_Sl;
+  }
+  if (Obj->releaseStartingPoint + noteLife < Env_R_completeTableLength) {
+    return completeReleaseTable[Obj->releaseStartingPoint + noteLife];
+  }
+  Obj->toBeDeleted = true;
+  return 0;
+}
 
 void Envelope::reloadTable() {
   //Attack
