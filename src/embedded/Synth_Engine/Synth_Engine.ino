@@ -1,5 +1,6 @@
 #include "SynthEngine.h"
 
+
 #define SERIAL_DEBUG 1
 
 SynthEngine audioEngine;
@@ -21,9 +22,10 @@ void setup() {
   audioEngine.soundList[1].setDefaultParam();
   audioEngine.soundList[2].setDefaultParam();
   audioEngine.soundList[2].Wavetype = 2;
-  audioEngine.soundList[1].Wavetype = WAVETYPE_SIN_3;
+  audioEngine.soundList[1].Wavetype = WAVETYPE_ORGAN;
   audioEngine.soundList[1].Trem.begin(1, 0);
   audioEngine.soundList[1].Trem.enable = 1;
+  audioEngine.soundList[1].ADSR.Env_At=10;
 }
 
 void loop() {

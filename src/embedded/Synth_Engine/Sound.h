@@ -12,13 +12,14 @@ private:
   unsigned int autoIncrementIndex = 0;
 public:
   int freq_sp;
-  float WaveTable[Wavetable_Length];
+  float WaveTable[LFO_Wavetable_Length];
   LFO();
   void begin(int _freq);
   void generateTable();
   float getValAutoIncrement(bool _increment);
   float getValAutoIncrementNew(bool _increment);
   void setSpeed(int _speed);
+  void increment();
 };
 
 class Tremolo {
@@ -51,6 +52,7 @@ public:
     ADSR.Env_Sl = 200;
     ADSR.Env_Rt = 200;
     ADSR.reloadTable();
+    
     Wavetype = 0;
   }
 };

@@ -33,7 +33,7 @@ void requestAction(String msg) {
       case 1:
         if (control == 20 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SIN;
         else if (control == 21 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_TRIANG;
-        else if (control == 22 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SIN_3;
+        else if (control == 22 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_ORGAN;
         else if (control == 23 && value) audioEngine.soundList[1].Wavetype = WAVETYPE_SAW;
 
         break;
@@ -41,7 +41,7 @@ void requestAction(String msg) {
         if (control == 20 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN;
         else if (control == 21 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_TRIANG;
         else if (control == 22 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SAW;
-        else if (control == 23 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN_3;
+        else if (control == 23 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_ORGAN;
         else if (control == 24 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SQUARE;
         else if (control == 31) {
           audioEngine.soundList[2].ADSR.Env_Rt = value ? 600 : 200;

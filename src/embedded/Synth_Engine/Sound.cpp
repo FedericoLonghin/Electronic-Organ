@@ -14,13 +14,13 @@ void LFO::begin(int _freq) {
 }
 
 void LFO::generateTable() {
-  for (int i = 0; i < Wavetable_Length; i++) {
-    WaveTable[i] = (sin(i * TWO_PI / (float)Wavetable_Length) + 1) / 2;
+  for (int i = 0; i < LFO_Wavetable_Length; i++) {
+    WaveTable[i] = (sin(i * TWO_PI / (float)LFO_Wavetable_Length) + 1) / 2;
   }
 }
 
 float LFO::getValAutoIncrement(bool _increment) {
-  byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(Wavetable_Length / (float)Sample_Rate));
+  byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(LFO_Wavetable_Length / (float)Sample_Rate));
 
   if (addr == 0 && freq_ramp_enable_next_step) {
     if (freq_pv < freq_sp) {
@@ -41,7 +41,7 @@ float LFO::getValAutoIncrement(bool _increment) {
 }
 
 float LFO::getValAutoIncrementNew(bool _increment) {
-  byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(Wavetable_Length / (float)Sample_Rate));
+  byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(LFO_Wavetable_Length / (float)Sample_Rate));
 
   if (addr == 0) {
     if (freq_ramp_enable_next_step) {
@@ -68,6 +68,11 @@ void LFO::setSpeed(int _speed) {
   freq_sp = _speed;
 }
 
+void LFO::increment() {
+  autoIncrementIndex++;
+  if (autoIncrementIndex >= Sample_Rate) autoIncrementIndex = 0;
+}
+
 /*
  *  Tremolo
  */
@@ -76,7 +81,7 @@ void Tremolo::begin(int _speed, int _depth) {
   this->speed_sp = _speed;
   this->depth_sp = _depth;
   this->depth_pv = _depth;
-  this->enable = true;
+  // this->enable = true;
   this->_tremLFO.begin(_speed);
 }
 
