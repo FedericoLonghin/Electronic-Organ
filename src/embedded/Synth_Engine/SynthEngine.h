@@ -6,6 +6,7 @@
 #include "Envelope.h"
 #include "Sound.h"
 
+
 extern byte wave[MAGIC_BUFFER_OFFSET * 2];
 extern bool newSampleREQ;
 extern bool newSampleREQ_SectionToFill;
@@ -39,14 +40,11 @@ public:
   void setupCore0();
   void generateAudioChunk(int a, bool b);
   void AudioCompositorHandler();
-
+  byte drowBarsStat[9] = { 1, 1, 1, 0, 0, 0, 0, 0, 0 };
   byte Wavetable_table[MaxWaveTypes][Wavetable_Length];
   unsigned int FillBufferIndex = 0;
   bool activeNoteList_Change_REQ = false;
   bool activeNoteList_Change_ACK = false;
-
 };
-
 void IRAM_ATTR IntSR();
-
 #endif

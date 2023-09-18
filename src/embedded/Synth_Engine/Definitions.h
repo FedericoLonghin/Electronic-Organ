@@ -10,7 +10,7 @@
 #define MAGIC_BUFFER_OFFSET 100  //Output buffer size
 
 // Wavetable
-#define Wavetable_Length 200
+#define Wavetable_Length 400
 #define MaxWaveTypes 5
 #define Wavetable_MaxAmplitude_val 255
 #define WAVETYPE_SIN 0

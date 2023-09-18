@@ -12,8 +12,6 @@ void setup() {
   setCpuFrequencyMhz(2400);
   if (SERIAL_DEBUG) Serial.begin(921600);
   Serial2.begin(9600, SERIAL_8N1, 16, 17);
-  // setupTimerInterrupt();
-  // setupCore0();
   setupTimerInterrupt();
   Serial.printf("Electronic Organ started!\nCPU Freq: %d\n", getCpuFrequencyMhz());
 
@@ -25,7 +23,8 @@ void setup() {
   audioEngine.soundList[1].Wavetype = WAVETYPE_ORGAN;
   audioEngine.soundList[1].Trem.begin(1, 0);
   audioEngine.soundList[1].Trem.enable = 1;
-  audioEngine.soundList[1].ADSR.Env_At=10;
+  audioEngine.soundList[1].ADSR.Env_At = 10;
+  reloadStops();
 }
 
 void loop() {

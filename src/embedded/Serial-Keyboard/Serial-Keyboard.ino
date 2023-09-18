@@ -43,11 +43,12 @@ void loop() {
     msg_len_i++;
     // delay(5);
   }
-
+// Serial.println("a");
   if (payload) {
 
-    if (msg.startsWith("TuneREQ")) {
-      shiftTone = 0;
+    if (msg.startsWith("reloadSt")) {
+      Serial.println("reload Stop REQ");
+      sendAllStopsStatus();
     }
     payload = false;
   }

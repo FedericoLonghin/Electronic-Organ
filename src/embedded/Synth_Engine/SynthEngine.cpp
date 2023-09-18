@@ -24,6 +24,11 @@ unsigned int totalWaveVal;
 unsigned int totalWaveVal_ch;
 float divider = Wavetable_Length / ((float)(Sample_Rate));
 
+
+// reloadWavetable()
+float drowBarsMolt[9] = { 1, 3, 2, 4, 6, 8, 10, 12, 16 };
+float val;
+
 // IntSr()
 byte wave[MAGIC_BUFFER_OFFSET * 2];
 bool newSampleREQ;
@@ -50,12 +55,12 @@ bool SynthEngine::start(int note, int channel) {
   if (note < 0) return 0;
   int locat = find_inActiveNoteList(note, channel);
   if (locat != -1) {  //this note is already present
-    Serial.println("New note is already present");
+    // Serial.println("New note is already present");
     Envelope *env = &soundList[channel].ADSR;
     byte ampl = env->getAmplitude(AudioObjectList[getNoteId(note, channel)]->ticksFromLastEvent, 0, AudioObjectList[getNoteId(note, channel)]->releaseStartingPoint, &AudioObjectList[getNoteId(note, channel)]->toBeDeleted);
     int envelopeIndexStart = env->getAttackIndex(ampl);
     AudioObjectList[getNoteId(note, channel)] = new AudioObject(note + ObjectChannelShift[channel], envelopeIndexStart * (Sample_Rate / 1000), channel);
-    Serial.printf("Ampl:%d\tStart:%d\n", ampl, envelopeIndexStart);
+    // Serial.printf("Ampl:%d\tStart:%d\n", ampl, envelopeIndexStart);
   } else {
     if (_currentlyPlayingNote_total >= _MAX_AUDIO_OBJECT_NUMBER) {
       return 0;
@@ -87,10 +92,7 @@ bool SynthEngine::stop(int pos_in_activeNoteList, int channel) {
     while (!activeNoteList_Change_ACK) {
       // uselessCounter++;
       esp_task_wdt_reset();
-
-      // Serial.println("B");
     }
-    Serial.printf("switching pos: %d <-> %d\n", pos_in_activeNoteList, _currentlyPlayingNote_perChannel[channel] - 1);
     NewactiveNoteList[channel][pos_in_activeNoteList] = NewactiveNoteList[channel][_currentlyPlayingNote_perChannel[channel] - 1];
     activeNoteList_Change_REQ = false;
   }
@@ -104,7 +106,7 @@ void SynthEngine::cleanSilentObjects() {
     int num = _currentlyPlayingNote_perChannel[ch];
     for (int i = 0; i < num; i++) {
       if (AudioObjectList[NewactiveNoteList[ch][i]]->toBeDeleted) {
-        Serial.printf("Stopping %d\n", i);
+        // Serial.printf("Stopping %d\n", i);
         stop(i, ch);
       }
     }
@@ -155,9 +157,8 @@ void SynthEngine::reloadWavetable() {
       } else {
         Wavetable_table[WAVETYPE_TRIANG][i] = Wavetable_table[WAVETYPE_TRIANG][Wavetable_Length / 2 - i];
       }
-    }
-      else
-       Wavetable_table[WAVETYPE_TRIANG][i] = Wavetable_table[WAVETYPE_TRIANG][i - Wavetable_Length / 2];
+    } else
+      Wavetable_table[WAVETYPE_TRIANG][i] = Wavetable_table[WAVETYPE_TRIANG][i - Wavetable_Length / 2];
   }
 
   // Double Frequency Saw
@@ -179,13 +180,10 @@ void SynthEngine::reloadWavetable() {
   }
 
   // Double Frequency Organ
-  byte drowBars[9] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-  float drowBarsMolt[9] = { 1, 2, 3, 4, 6, 8, 10, 12, 16 };
-  float val;
   for (int i = 0; i < Wavetable_Length; i++) {
     val = 0;
     for (int b = 0; b < 9; b++) {
-      if (drowBars[b])
+      if (drowBarsStat[b])
         val += sin((i / (float)Wavetable_Length) * drowBarsMolt[b] * 2 * PI);
     }
     Wavetable_table[WAVETYPE_ORGAN][i] = val * Wavetable_MaxAmplitude_val / 12.0f + Wavetable_MaxAmplitude_val / 2;
@@ -254,16 +252,8 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
         // FillBufferIndex = 0;
         int ObjAddr = NewactiveNoteList[ch][f];
         int _soundNum = AudioObjectList[ObjAddr]->sound;
-        // for (int i = 0; i < 4000; i++) {
 
-        // Serial.printf("i:%d\t\ttrem:%f\n", i, soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(FillBufferIndex));
-        // Serial.printf("i:%d\t\ttrem:%f\n", i, soundList[AudioObjectList[ObjAddr]->sound].Trem.getVal(i));
-        //   FillBufferIndex++;
-        // }
-        // while (1) {}
-
-        // Serial.println(trem);
-        sampleVal = Wavetable_table[soundList[_soundNum].Wavetype][(byte)((((AudioObjectList[ObjAddr]->frequency) / 2 * FillBufferIndex) % (Sample_Rate)) * divider)];
+        sampleVal = Wavetable_table[soundList[_soundNum].Wavetype][(int)(((int)((AudioObjectList[ObjAddr]->frequency) / 2 * FillBufferIndex ) % (Sample_Rate)) * divider)];
         ampl = soundList[_soundNum].ADSR.getAmplitudeNew(AudioObjectList[ObjAddr]);
 
         totalWaveVal_ch += (sampleVal * ampl);
@@ -300,4 +290,10 @@ void setupTimerInterrupt() {
   timerAttachInterrupt(Timer0_Cfg, *IntSR, true);
   timerAlarmWrite(Timer0_Cfg, 1000, true);
   timerAlarmEnable(Timer0_Cfg);
+}
+
+
+float lowpass_filter(float input, float alpha, float prevInput, float prevOutput) {
+  float output = alpha * input + (1.0 - alpha) * prevOutput;
+  return output;
 }

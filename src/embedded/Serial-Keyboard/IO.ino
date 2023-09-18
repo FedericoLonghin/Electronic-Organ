@@ -38,7 +38,9 @@ void getButtonPressed() {
     // delayMicroseconds(t);
     digitalWrite(CLK, HIGH);
     // delayMicroseconds(t);
+      Serial.print(digitalRead(OUT));
   }
+  Serial.println();
 }
 
 void fetchAnalog() {
@@ -137,4 +139,11 @@ void checkEncoder() {
   }
   encoder_out_a_prev = digitalRead(ENCODER_OUT_A);
   encoder_out_b_prev = digitalRead(ENCODER_OUT_B);
+}
+
+
+void sendAllStopsStatus() {
+  for (int i = 0; i < BINARY_IN_LENGHT; i++) {
+    toggleAction(i, keyStatus[i]);
+  }
 }

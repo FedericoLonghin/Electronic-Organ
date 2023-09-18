@@ -1,3 +1,4 @@
+bool mode_editOrganSound = false;
 void requestAction(String msg) {
   if (msg.startsWith("N-On")) {
     Serial.println(msg);
@@ -38,12 +39,25 @@ void requestAction(String msg) {
 
         break;
       case 2:
-        if (control == 20 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN;
-        else if (control == 21 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_TRIANG;
-        else if (control == 22 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SAW;
-        else if (control == 23 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_ORGAN;
-        else if (control == 24 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SQUARE;
-        else if (control == 31) {
+        if (mode_editOrganSound) {
+          if (control == 20) audioEngine.drowBarsStat[0] = value;
+          else if (control == 21) audioEngine.drowBarsStat[1] = value;
+          else if (control == 22) audioEngine.drowBarsStat[2] = value;
+          else if (control == 23) audioEngine.drowBarsStat[3] = value;
+          else if (control == 24) audioEngine.drowBarsStat[4] = value;
+          else if (control == 25) audioEngine.drowBarsStat[5] = value;
+          else if (control == 26) audioEngine.drowBarsStat[6] = value;
+          else if (control == 27) audioEngine.drowBarsStat[7] = value;
+          else if (control == 28) audioEngine.drowBarsStat[8] = value;
+          if (control >= 20 && control <= 28) audioEngine.reloadWavetable();
+        } else {
+          if (control == 20 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SIN;
+          else if (control == 21 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_TRIANG;
+          else if (control == 22 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SAW;
+          else if (control == 23 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_ORGAN;
+          else if (control == 24 && value) audioEngine.soundList[2].Wavetype = WAVETYPE_SQUARE;
+        }
+        if (control == 31) {
           audioEngine.soundList[2].ADSR.Env_Rt = value ? 600 : 200;
           audioEngine.soundList[2].ADSR.reloadTable();
         } else if (control == 32) {
@@ -52,6 +66,8 @@ void requestAction(String msg) {
         }
         break;
       case 3:
+        if (control == 21) mode_editOrganSound = value;
+
         if (control == 29) {  // Space Motion
           if (!value) audioEngine.soundList[1].Trem.enable = true;
           audioEngine.soundList[1].Trem.setDepth(value ? 0 : 4);
@@ -64,8 +80,8 @@ void requestAction(String msg) {
   }
 }
 
-void tuningReq() {
+void reloadStops() {
   audioEngine.stopAll();
-  Serial.println("TuneREQ.");
-  Serial2.println("TuneREQ 0.");
+  Serial.println("reloadStops .");
+  Serial2.println("reloadStops 0.");
 }
