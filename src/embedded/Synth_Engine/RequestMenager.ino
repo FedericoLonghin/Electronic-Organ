@@ -67,8 +67,11 @@ void requestAction(String msg) {
         break;
       case 3:
         if (control == 21) mode_editOrganSound = value;
-
-        if (control == 29) {  // Space Motion
+        else if (control == 25) {  // Vibrato I
+          if (!value) audioEngine.soundList[1].Vibr.enable = true;
+          audioEngine.soundList[1].Vibr.setDepth(value ? 0 : 0.1);
+          // audioEngine.soundList[1].Trem.enable = 1;
+        } else if (control == 29) {  // Space Motion
           if (!value) audioEngine.soundList[1].Trem.enable = true;
           audioEngine.soundList[1].Trem.setDepth(value ? 0 : 4);
           // audioEngine.soundList[1].Trem.enable = 1;
@@ -82,6 +85,6 @@ void requestAction(String msg) {
 
 void reloadStops() {
   audioEngine.stopAll();
-  Serial.println("reloadStops .");
+  // Serial.println("reloadStops .");
   Serial2.println("reloadStops 0.");
 }

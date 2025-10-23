@@ -16,7 +16,7 @@
 int uselessCounter = 0;
 
 // generateAudioChunk()
-byte sampleVal;
+int sampleVal;
 byte ampl;
 float trem;
 float oldtrem;
@@ -27,7 +27,7 @@ float divider = Wavetable_Length / ((float)(Sample_Rate));
 
 // reloadWavetable()
 float drowBarsMolt[9] = { 1, 3, 2, 4, 6, 8, 10, 12, 16 };
-float val;
+float drowBarSAmpleVal;
 
 // IntSr()
 byte wave[MAGIC_BUFFER_OFFSET * 2];
@@ -181,12 +181,12 @@ void SynthEngine::reloadWavetable() {
 
   // Double Frequency Organ
   for (int i = 0; i < Wavetable_Length; i++) {
-    val = 0;
+    drowBarSAmpleVal = 0;
     for (int b = 0; b < 9; b++) {
       if (drowBarsStat[b])
-        val += sin((i / (float)Wavetable_Length) * drowBarsMolt[b] * 2 * PI);
+        drowBarSAmpleVal += sin((i / (float)Wavetable_Length) * drowBarsMolt[b] * 2 * PI);
     }
-    Wavetable_table[WAVETYPE_ORGAN][i] = val * Wavetable_MaxAmplitude_val / 12.0f + Wavetable_MaxAmplitude_val / 2;
+    Wavetable_table[WAVETYPE_ORGAN][i] = drowBarSAmpleVal * Wavetable_MaxAmplitude_val / 12.0f + Wavetable_MaxAmplitude_val / 2;
   }
 }
 
@@ -198,23 +198,20 @@ void tick();
 void SynthEngine::AudioCompositorHandler() {
 #if 0  //testbench
   while (1) {
-    while (!getActiveNotesNumber()) {
+    while (!_currentlyPlayingNote_total) {
       esp_task_wdt_reset();
     }
 #define counterLen 200000
     int testVal = 0;
-    soundList[0].Trem.begin(1,1);
-    soundList[0].Trem.enable;
+    soundList[0].Vibr.begin(1, 1);
+    soundList[0].Vibr.enable;
     startCounter(counterLen, false);
     for (int i = 0; i < counterLen; i++) {
-      int ObjAddr = activeNoteList[0];
-      trem = soundList[0].Trem.getValNew(true);//...ms
 
-      testVal += trem;
+      // Serial.println(soundList[0].Vibr.getVal(true));
       // tick();
     }
     endCounter();
-    Serial.println(testVal);
   }
 #endif
   for (;;) {
@@ -235,7 +232,7 @@ void SynthEngine::AudioCompositorHandler() {
   }
 }
 
-
+float val, prevVal;
 
 void SynthEngine::generateAudioChunk(int len, bool _section) {
   int noteNum[AUDIO_OBJECT_CHANNEL];
@@ -252,10 +249,11 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
         // FillBufferIndex = 0;
         int ObjAddr = NewactiveNoteList[ch][f];
         int _soundNum = AudioObjectList[ObjAddr]->sound;
+        val = soundList[ch].Vibr.getVal(f == 0);
 
-        sampleVal = Wavetable_table[soundList[_soundNum].Wavetype][(int)(((int)((AudioObjectList[ObjAddr]->frequency) / 2 * FillBufferIndex ) % (Sample_Rate)) * divider)];
+        sampleVal = Wavetable_table[soundList[_soundNum].Wavetype][(int)(((unsigned long)((AudioObjectList[ObjAddr]->frequency) / 2 * val * FillBufferIndex) % (Sample_Rate)) * divider)];
         ampl = soundList[_soundNum].ADSR.getAmplitudeNew(AudioObjectList[ObjAddr]);
-
+        // Serial.printf("FillBufferIndex: %d\t autoincr: %d\t Vibr: %f\n", FillBufferIndex, soundList[ch].Vibr._vibrLFO.autoIncrementIndex, val);
         totalWaveVal_ch += (sampleVal * ampl);
       }
       trem = soundList[ch].Trem.getVal(true);
@@ -266,6 +264,7 @@ void SynthEngine::generateAudioChunk(int len, bool _section) {
     FillBufferIndex++;
     if (FillBufferIndex >= Sample_Rate) {
       FillBufferIndex = 0;
+      // Serial.printf("1");
     }
   }
 }

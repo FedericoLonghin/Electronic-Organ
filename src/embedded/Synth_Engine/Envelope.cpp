@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include "Envelope.h"
 
+//Deprecated
 int Envelope::getAmplitude(unsigned long noteLife, bool isKeyPressed, unsigned int releaseStartingPoint, bool *toBeDeleted) {
   noteLife /= (Sample_Rate / 1000);  //changing referement to millisecond
   if (isKeyPressed) {

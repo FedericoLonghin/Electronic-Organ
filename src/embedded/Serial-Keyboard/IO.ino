@@ -38,9 +38,9 @@ void getButtonPressed() {
     // delayMicroseconds(t);
     digitalWrite(CLK, HIGH);
     // delayMicroseconds(t);
-      Serial.print(digitalRead(OUT));
+      // Serial.print(digitalRead(OUT));
   }
-  Serial.println();
+  // Serial.println();
 }
 
 void fetchAnalog() {
@@ -114,7 +114,7 @@ void checkPedal() {
     }
     if (pedalVal != 0 && pedalVal != 1023) {
       controlChange(0, 11, val / 16);
-      MidiUSB.flush();
+      // MidiUSB.flush();
       // displayForceUpdate = true;
     }
     pedalVal = val;

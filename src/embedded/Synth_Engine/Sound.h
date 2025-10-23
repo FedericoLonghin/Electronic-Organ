@@ -7,17 +7,16 @@
 
 class LFO {
 private:
-   int freq_pv;
   bool freq_ramp_enable_next_step = false;
-  unsigned int autoIncrementIndex = 0;
 public:
+  int freq_pv;
+  unsigned int autoIncrementIndex = 0;
   int freq_sp;
   float WaveTable[LFO_Wavetable_Length];
   LFO();
   void begin(int _freq);
   void generateTable();
   float getValAutoIncrement(bool _increment);
-  float getValAutoIncrementNew(bool _increment);
   void setSpeed(int _speed);
   void increment();
 };
@@ -35,7 +34,21 @@ public:
   void setSpeed(int _speed);
   void setDepth(float _depth);
   float getVal(bool _increment);
-  float getValNew(bool _increment);
+};
+
+class Vibrato {
+private:
+  int speed_sp;    //[1,Inf[
+  float depth_sp;  //[0,10]
+  float depth_pv;
+
+public:
+  LFO _vibrLFO;
+  bool enable = false;
+  void begin(int _speed, int _depth);
+  void setSpeed(int _speed);
+  void setDepth(float _depth);
+  float getVal(bool _increment);
 };
 
 class Sound {
@@ -44,15 +57,17 @@ public:
   byte Wavetype;
 
   Tremolo Trem;
+  Vibrato Vibr;
   void setDefaultParam() {
     Trem.begin(1, 5);
+    Vibr.begin(1, 5);
     ADSR.Env_At = 100;
     ADSR.Env_Al = 255;
     ADSR.Env_Dt = 100;
     ADSR.Env_Sl = 200;
     ADSR.Env_Rt = 200;
     ADSR.reloadTable();
-    
+
     Wavetype = 0;
   }
 };

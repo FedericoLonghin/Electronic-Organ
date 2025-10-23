@@ -1,7 +1,7 @@
 #include "SynthEngine.h"
 
 
-#define SERIAL_DEBUG 1
+ #define SERIAL_DEBUG 0
 
 SynthEngine audioEngine;
 TaskHandle_t Core0;
@@ -23,8 +23,13 @@ void setup() {
   audioEngine.soundList[1].Wavetype = WAVETYPE_ORGAN;
   audioEngine.soundList[1].Trem.begin(1, 0);
   audioEngine.soundList[1].Trem.enable = 1;
-  audioEngine.soundList[1].ADSR.Env_At = 10;
+  audioEngine.soundList[1].Vibr.begin(5, 0);
+  audioEngine.soundList[1].Vibr.enable = 1;
+  audioEngine.soundList[1].ADSR.Env_At = 20;
   reloadStops();
+  audioEngine.stopAll();
+  // requestAction("CC 003 025 000");
+  // requestAction("N-On 001 019");
 }
 
 void loop() {

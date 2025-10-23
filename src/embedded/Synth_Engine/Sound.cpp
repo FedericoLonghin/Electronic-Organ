@@ -15,32 +15,13 @@ void LFO::begin(int _freq) {
 
 void LFO::generateTable() {
   for (int i = 0; i < LFO_Wavetable_Length; i++) {
-    WaveTable[i] = (sin(i * TWO_PI / (float)LFO_Wavetable_Length) + 1) / 2;
+    WaveTable[i] = (sin(i * TWO_PI / (float)(LFO_Wavetable_Length)) + 1) / 2;
   }
 }
+
+
 
 float LFO::getValAutoIncrement(bool _increment) {
-  byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(LFO_Wavetable_Length / (float)Sample_Rate));
-
-  if (addr == 0 && freq_ramp_enable_next_step) {
-    if (freq_pv < freq_sp) {
-      freq_pv += 1;
-      autoIncrementIndex = 0;
-    } else if (freq_pv > freq_sp) {
-      freq_pv -= 1;
-      autoIncrementIndex = 0;
-    }
-    freq_ramp_enable_next_step = false;
-  }
-
-  if (addr != 0) { freq_ramp_enable_next_step = true; }
-
-  if (_increment) { autoIncrementIndex++; }
-  if (autoIncrementIndex >= Sample_Rate) autoIncrementIndex = 0;
-  return WaveTable[addr];
-}
-
-float LFO::getValAutoIncrementNew(bool _increment) {
   byte addr = (byte)(((autoIncrementIndex * freq_pv) % Sample_Rate) * (float)(LFO_Wavetable_Length / (float)Sample_Rate));
 
   if (addr == 0) {
@@ -60,7 +41,10 @@ float LFO::getValAutoIncrementNew(bool _increment) {
   }
 
   if (_increment) { autoIncrementIndex++; }
-  if (autoIncrementIndex >= Sample_Rate) autoIncrementIndex = 0;
+  if (autoIncrementIndex >= Sample_Rate) {
+    autoIncrementIndex = 0;
+    Serial.printf("0");
+  }
   return WaveTable[addr];
 }
 
@@ -96,6 +80,7 @@ void Tremolo::setDepth(float _depth) {
   depth_sp = _depth;
 }
 
+
 float Tremolo::getVal(bool _increment) {
   if (!enable) return 1;
   if (depth_pv < depth_sp) depth_pv += 0.001;
@@ -104,10 +89,34 @@ float Tremolo::getVal(bool _increment) {
   return 1 + (_tremLFO.getValAutoIncrement(_increment) * (depth_pv / (float)10));
 }
 
-float Tremolo::getValNew(bool _increment) {
+/*
+ *  Vibrato
+ */
+
+void Vibrato::begin(int _speed, int _depth) {
+  this->speed_sp = _speed;
+  this->depth_sp = _depth;
+  this->depth_pv = _depth;
+  // this->enable = true;
+  this->_vibrLFO.begin(_speed);
+}
+
+void Vibrato::setSpeed(int _speed) {
+  if (_speed <= 0) _speed = 1;
+  _vibrLFO.freq_sp = _speed;
+  _vibrLFO.freq_pv = _speed;
+}
+
+void Vibrato::setDepth(float _depth) {
+  if (_depth > 10) _depth = 10;
+  if (_depth < 0) _depth = 0;
+  depth_sp = _depth;
+}
+
+float Vibrato::getVal(bool _increment) {
   if (!enable) return 1;
   if (depth_pv < depth_sp) depth_pv += 0.001;
   else if (depth_pv > depth_sp) depth_pv -= 0.001;
   if (depth_sp == 0.0 & depth_pv <= 0.001) enable = false;
-  return 1 + (_tremLFO.getValAutoIncrementNew(_increment) * (depth_pv / (float)10));
+  return 0.7 + (_vibrLFO.getValAutoIncrement(_increment) * (depth_pv / (float)10));
 }
