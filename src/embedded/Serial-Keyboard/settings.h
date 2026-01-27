@@ -14,9 +14,9 @@
 #define midi true
 #define t 1
 #define tAnalog 200
-#define STARTING_KEY_VAL_LOW 53  //29: middle:C2,  53:middle:C4
-#define STARTING_KEY_VAL_UPP 53  //29: middle:C2,  53:middle:C4
-#define STARTING_KEY_VAL_PED 40
+#define STARTING_KEY_VAL_LOW 0  
+#define STARTING_KEY_VAL_UPP 0  
+#define STARTING_KEY_VAL_PED -32
 
 #define ANALOG_FILTER_RANGE 5
 #define ANALOG_FILTER_IGNORE_RANGE 10
@@ -37,8 +37,8 @@
 
 bool encoder_out_a_prev;
 bool encoder_out_b_prev;
-bool encoder_inc,encoder_dec;
-bool showChords=false;
+bool encoder_inc, encoder_dec;
+bool showChords = false;
 //Display animation
 bool displayForceUpdate = true;
 
@@ -50,10 +50,11 @@ bool displayShowOnShow = false;
 int displayChordDuration = 0;
 bool displayChordOnShow = false;
 #define DISPLAY_CHORD_DURATION 200
+#define DEBOUNCE_IN_TIME 50
 
 int shiftTone = 0;
-
 bool keyStatus[BINARY_IN_LENGHT];
+unsigned long lastKeyIteration_ms[BINARY_IN_LENGHT];
 bool upperKeyboardStatus[UPPER_KEYBOARD_LENGTH];
 bool lowerKeyboardStatus[UPPER_KEYBOARD_LENGTH];
 String noteName[] = { "DO", "DO#", "RE", "RE#", "MI", "FA", "FA#", "SOL", "SOL#", "LA", "LA#", "SI" };

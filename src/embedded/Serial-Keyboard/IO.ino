@@ -25,16 +25,22 @@ void getButtonPressed() {
     // //OTHER
 
 
-    if (keyStatus[i] != digitalRead(OUT)) {
+    if (keyStatus[i] != digitalRead(OUT) && millis() - lastKeyIteration_ms[i] > DEBOUNCE_IN_TIME) {
+      // Serial.print("toggling: ");
+      // Serial.print(i);
+      // Serial.print(" stat: ");
+      // Serial.println(keyStatus[i]);
       toggleAction(i, digitalRead(OUT));
-
+      lastKeyIteration_ms[i] = millis();
       keyStatus[i] = digitalRead(OUT);
     }
     digitalWrite(CLK, LOW);
     // delayMicroseconds(t);
     digitalWrite(CLK, HIGH);
     // delayMicroseconds(t);
+      // Serial.print(digitalRead(OUT));
   }
+  // Serial.println();
 }
 
 void fetchAnalog() {
@@ -108,7 +114,7 @@ void checkPedal() {
     }
     if (pedalVal != 0 && pedalVal != 1023) {
       controlChange(0, 11, val / 16);
-      MidiUSB.flush();
+      // MidiUSB.flush();
       // displayForceUpdate = true;
     }
     pedalVal = val;
@@ -133,4 +139,11 @@ void checkEncoder() {
   }
   encoder_out_a_prev = digitalRead(ENCODER_OUT_A);
   encoder_out_b_prev = digitalRead(ENCODER_OUT_B);
+}
+
+
+void sendAllStopsStatus() {
+  for (int i = 0; i < BINARY_IN_LENGHT; i++) {
+    toggleAction(i, keyStatus[i]);
+  }
 }

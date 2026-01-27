@@ -61,7 +61,7 @@ void checkAnalog() {
             break;
         }
 
-        MidiUSB.flush();
+        // MidiUSB.flush();
         analogVal[i] = newAnalogVal[i];
       }
     }
@@ -98,7 +98,7 @@ void toggleAction(int index, bool val) {
       break;
 
     // Registers
-
+/*
     // Pedal
     case DIGITAL_PEDAL_FLUTE:
       controlChange(0, 20, val * 64);
@@ -216,18 +216,19 @@ void toggleAction(int index, bool val) {
       controlChange(3, 30, val * 64);
       break;
     case DIGITAL_SYNTH_SEMI_DOWN:
-      shiftTone--;
+      // shiftTone--;
       displayForceUpdate = true;
       break;
     case DIGITAL_SYNTH_SEMI_UP:
-      shiftTone++;
+      // shiftTone++;
       displayForceUpdate = true;
       break;
     case DIGITAL_SYNTH_CANCEL:
       showChords = !showChords;
       break;
+      */
   }
-  MidiUSB.flush();
+  // MidiUSB.flush();
 }
 
 byte remappedIO(byte val) {
@@ -266,3 +267,4 @@ byte remappedIO(byte val) {
   }
   return -1;
 }
+
